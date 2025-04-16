@@ -81,10 +81,10 @@ namespace kingstar2femasfee
         [Description("*")]
         All = '*',
 
-        [Description("否")]
+        [Description("不跟随")]
         No = '0',
 
-        [Description("是")]
+        [Description("跟随")]
         Yes = '1'
     }
 

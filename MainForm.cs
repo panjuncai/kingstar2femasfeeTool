@@ -94,6 +94,9 @@ namespace kingstar2femasfee
             
             // 处理交易所手续费率数据
             ProcessExchangeTradeFeeData(femasDir);
+            
+            // 处理特殊交易手续费率数据
+            ProcessSpecialTradeFeeData(femasDir);
         }
         
         /// <summary>
@@ -128,12 +131,46 @@ namespace kingstar2femasfee
         }
         
         /// <summary>
+        /// 处理特殊交易手续费率数据
+        /// </summary>
+        private void ProcessSpecialTradeFeeData(string femasDir)
+        {
+            LogInfo("开始处理特殊交易手续费率数据...");
+            
+            // 读取Excel文件
+            var (success, dataList) = ExcelHelper.ReadSpecialTradeFeeExcel(femasDir, LogInfo);
+            
+            // 如果读取成功且数据验证通过，则导入数据库
+            if (success && dataList.Count > 0)
+            {
+                LogInfo($"数据校验通过，准备导入 {dataList.Count} 条特殊交易手续费率数据");
+                bool importSuccess = DatabaseHelper.ImportSpecialTradeFeeData(dataList, LogInfo);
+                
+                if (importSuccess)
+                {
+                    LogInfo("特殊交易手续费率数据导入成功");
+                }
+                else
+                {
+                    LogInfo("特殊交易手续费率数据导入失败");
+                }
+            }
+            else
+            {
+                LogInfo("数据校验未通过，请检查Excel文件");
+            }
+        }
+        
+        /// <summary>
         /// 记录日志信息
         /// </summary>
         private void LogInfo(string message)
         {
+            // 添加时间戳
+            string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {message}";
+            
             // 添加到日志集合
-            logMessages.Insert(0, message);
+            logMessages.Insert(0, logEntry);
             
             // 更新日志文本框
             UpdateLogTextBox();

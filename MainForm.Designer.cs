@@ -35,13 +35,13 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.textBox_log = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btn_femas_dir = new System.Windows.Forms.Button();
             this.textBox_femas = new System.Windows.Forms.TextBox();
             this.btn_kingstar_dir = new System.Windows.Forms.Button();
             this.textBox_kingstar = new System.Windows.Forms.TextBox();
             this.button_calc = new System.Windows.Forms.Button();
+            this.textBox_log = new System.Windows.Forms.RichTextBox();
             this.tabControl1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -108,8 +108,8 @@
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 1324F));
             this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.textBox_log, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.textBox_log, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
@@ -121,24 +121,15 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1324, 663);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
-            // textBox_log
-            // 
-            this.textBox_log.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox_log.Location = new System.Drawing.Point(3, 506);
-            this.textBox_log.Multiline = true;
-            this.textBox_log.Name = "textBox_log";
-            this.textBox_log.ReadOnly = true;
-            this.textBox_log.Size = new System.Drawing.Size(1318, 154);
-            this.textBox_log.TabIndex = 2;
-            // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 5;
+            this.tableLayoutPanel2.ColumnCount = 6;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 300F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel2.Controls.Add(this.btn_femas_dir, 3, 0);
             this.tableLayoutPanel2.Controls.Add(this.textBox_femas, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.btn_kingstar_dir, 1, 0);
@@ -155,7 +146,7 @@
             // btn_femas_dir
             // 
             this.btn_femas_dir.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_femas_dir.Location = new System.Drawing.Point(822, 4);
+            this.btn_femas_dir.Location = new System.Drawing.Point(772, 4);
             this.btn_femas_dir.Margin = new System.Windows.Forms.Padding(4);
             this.btn_femas_dir.Name = "btn_femas_dir";
             this.btn_femas_dir.Size = new System.Drawing.Size(192, 31);
@@ -167,16 +158,16 @@
             // textBox_femas
             // 
             this.textBox_femas.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox_femas.Location = new System.Drawing.Point(513, 4);
+            this.textBox_femas.Location = new System.Drawing.Point(488, 4);
             this.textBox_femas.Margin = new System.Windows.Forms.Padding(4);
             this.textBox_femas.Name = "textBox_femas";
-            this.textBox_femas.Size = new System.Drawing.Size(301, 28);
+            this.textBox_femas.Size = new System.Drawing.Size(276, 28);
             this.textBox_femas.TabIndex = 2;
             // 
             // btn_kingstar_dir
             // 
             this.btn_kingstar_dir.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_kingstar_dir.Location = new System.Drawing.Point(313, 4);
+            this.btn_kingstar_dir.Location = new System.Drawing.Point(288, 4);
             this.btn_kingstar_dir.Margin = new System.Windows.Forms.Padding(4);
             this.btn_kingstar_dir.Name = "btn_kingstar_dir";
             this.btn_kingstar_dir.Size = new System.Drawing.Size(192, 31);
@@ -191,20 +182,31 @@
             this.textBox_kingstar.Location = new System.Drawing.Point(4, 4);
             this.textBox_kingstar.Margin = new System.Windows.Forms.Padding(4);
             this.textBox_kingstar.Name = "textBox_kingstar";
-            this.textBox_kingstar.Size = new System.Drawing.Size(301, 28);
+            this.textBox_kingstar.Size = new System.Drawing.Size(276, 28);
             this.textBox_kingstar.TabIndex = 0;
             // 
             // button_calc
             // 
             this.button_calc.Dock = System.Windows.Forms.DockStyle.Right;
             this.button_calc.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_calc.Location = new System.Drawing.Point(1155, 3);
+            this.button_calc.Location = new System.Drawing.Point(1105, 3);
             this.button_calc.Name = "button_calc";
             this.button_calc.Size = new System.Drawing.Size(160, 33);
             this.button_calc.TabIndex = 5;
             this.button_calc.Text = "一键生成";
             this.button_calc.UseVisualStyleBackColor = true;
             this.button_calc.Click += new System.EventHandler(this.Button_calc_Click);
+            // 
+            // textBox_log
+            // 
+            this.textBox_log.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox_log.Location = new System.Drawing.Point(3, 506);
+            this.textBox_log.Name = "textBox_log";
+            this.textBox_log.ReadOnly = true;
+            this.textBox_log.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
+            this.textBox_log.Size = new System.Drawing.Size(1318, 154);
+            this.textBox_log.TabIndex = 4;
+            this.textBox_log.Text = "";
             // 
             // MainForm
             // 
@@ -219,7 +221,6 @@
             this.Text = "金士达转飞马浮动费率工具";
             this.tabControl1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
@@ -238,9 +239,9 @@
         private System.Windows.Forms.Button btn_kingstar_dir;
         private System.Windows.Forms.TextBox textBox_femas;
         private System.Windows.Forms.Button btn_femas_dir;
-        private System.Windows.Forms.TextBox textBox_log;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Button button_calc;
+        private System.Windows.Forms.RichTextBox textBox_log;
     }
 }
 
