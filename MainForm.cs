@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace kingstar2femasfee
 {
@@ -20,6 +21,7 @@ namespace kingstar2femasfee
             InitializeComponent();
             DatabaseHelper.InitializeDatabase();
             LoadConfigFromDatabase();
+            
             
             // 不需要这里重复绑定，Designer文件已经绑定了
             // btn_femas_dir.Click += Btn_femas_dir_Click;
@@ -197,5 +199,7 @@ namespace kingstar2femasfee
             }
             textBox_log.Text = sb.ToString();
         }
+        
+        
     }
 }
