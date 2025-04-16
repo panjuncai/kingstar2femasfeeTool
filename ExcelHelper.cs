@@ -43,8 +43,6 @@ namespace kingstar2femasfee
                 string fileName = Path.GetFileName(latestFile);
                 LogMessage(logAction, $"找到交易所手续费率文件: {fileName}");
                 
-                // 使用EPPlus读取Excel
-                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                 using (var package = new ExcelPackage(new FileInfo(latestFile)))
                 {
                     var worksheet = package.Workbook.Worksheets.FirstOrDefault();
@@ -89,9 +87,9 @@ namespace kingstar2femasfee
                             decimal execClearFeeAmt = ParseDecimal(worksheet.Cells[row, 18].Text);
                             
                             // 检查必填字段
-                            if (string.IsNullOrEmpty(exchCode) || string.IsNullOrEmpty(productType) || string.IsNullOrEmpty(productId))
+                            if (string.IsNullOrEmpty(exchCode) || string.IsNullOrEmpty(productType) || string.IsNullOrEmpty(productId)||string.IsNullOrEmpty(optionSeries)||string.IsNullOrEmpty(instrumentId)||string.IsNullOrEmpty(hedgeFlag)||string.IsNullOrEmpty(buySell))
                             {
-                                LogMessage(logAction, $"第{row}行数据不完整，交易所代码、产品类型和产品代码为必填项");
+                                LogMessage(logAction, $"第{row}行数据不完整，交易所代码、产品类型、产品代码、期权系列、期权代码、投保标识、买卖标识为必填项");
                                 success = false;
                                 continue;
                             }
