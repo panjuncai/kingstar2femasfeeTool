@@ -142,5 +142,29 @@ namespace kingstar2femasfee
             }
             return GetEnumFromChar<TEnum>(stringValue[0]);
         }
+
+        /// <summary>
+        /// 根据描述获取对应的枚举项
+        /// </summary>
+        public static TEnum GetEnumFromDescription<TEnum>(string description) where TEnum : Enum
+        {
+            foreach (TEnum value in Enum.GetValues(typeof(TEnum)))
+            {
+                if (GetDescription(value) == description)
+                {
+                    return value;
+                }
+            }
+            throw new ArgumentException($"在枚举{typeof(TEnum).Name}中找不到描述为'{description}'的枚举项");
+        }
+
+        /// <summary>
+        /// 根据描述获取对应的字符值
+        /// </summary>
+        public static char GetCharFromDescription<TEnum>(string description) where TEnum : Enum
+        {
+            TEnum enumValue = GetEnumFromDescription<TEnum>(description);
+            return Convert.ToChar(enumValue);
+        }
     }
 } 

@@ -27,7 +27,7 @@ namespace kingstar2femasfee
         {
             List<ExchangeTradeFeeDO> resultList = new List<ExchangeTradeFeeDO>();
             bool success = true;
-            
+
             try
             {
                 // 查找最新的匹配文件
@@ -42,7 +42,7 @@ namespace kingstar2femasfee
                 string latestFile = files.OrderByDescending(f => f).First();
                 string fileName = Path.GetFileName(latestFile);
                 LogMessage(logAction, $"找到交易所手续费率文件: {fileName}");
-                
+
                 using (var package = new ExcelPackage(new FileInfo(latestFile)))
                 {
                     var worksheet = package.Workbook.Worksheets.FirstOrDefault();
@@ -55,25 +55,29 @@ namespace kingstar2femasfee
                     // 获取行列范围
                     int rowCount = worksheet.Dimension.Rows;
                     int colCount = worksheet.Dimension.Columns;
-                    
+
                     // 检查数据重复
                     var exchangeDataCheck = new Dictionary<string, int>();
-                    
+
                     // 跳过标题行，从第二行开始读取
                     for (int row = 2; row <= rowCount; row++)
                     {
                         try
                         {
+                            string exchCode = "";
+                            string productType = "";
+                            string hedgeFlag = "";
+                            string buySell = "";
                             // 读取单元格数据
-                            string exchCode = worksheet.Cells[row, 1].Text.Trim();
-                            string productType = worksheet.Cells[row, 2].Text.Trim();
+                            string exchCodeText = worksheet.Cells[row, 1].Text.Trim();
+                            string productTypeText = worksheet.Cells[row, 2].Text.Trim();
                             string productId = worksheet.Cells[row, 3].Text.Trim();
                             string productName = worksheet.Cells[row, 4].Text.Trim();
                             string optionSeries = worksheet.Cells[row, 5].Text.Trim() == "" ? "*" : worksheet.Cells[row, 5].Text.Trim();
                             string instrumentId = worksheet.Cells[row, 6].Text.Trim() == "" ? "*" : worksheet.Cells[row, 6].Text.Trim();
-                            string hedgeFlag = worksheet.Cells[row, 7].Text.Trim() == "" ? "*" : worksheet.Cells[row, 7].Text.Trim();
-                            string buySell = worksheet.Cells[row, 8].Text.Trim() == "" ? "*" : worksheet.Cells[row, 8].Text.Trim();
-                            
+                            string hedgeFlagText = worksheet.Cells[row, 7].Text.Trim() == "" ? "*" : worksheet.Cells[row, 7].Text.Trim();
+                            string buySellText = worksheet.Cells[row, 8].Text.Trim() == "" ? "*" : worksheet.Cells[row, 8].Text.Trim();
+
                             // 解析费率和金额
                             decimal openFeeRate = ParseDecimal(worksheet.Cells[row, 9].Text);
                             decimal openFeeAmt = ParseDecimal(worksheet.Cells[row, 10].Text);
@@ -85,61 +89,68 @@ namespace kingstar2femasfee
                             decimal otFeeAmt = ParseDecimal(worksheet.Cells[row, 16].Text);
                             decimal execClearFeeRate = ParseDecimal(worksheet.Cells[row, 17].Text);
                             decimal execClearFeeAmt = ParseDecimal(worksheet.Cells[row, 18].Text);
-                            
+
                             // 检查必填字段
-                            if (string.IsNullOrEmpty(exchCode) || string.IsNullOrEmpty(productType) || string.IsNullOrEmpty(productId)||string.IsNullOrEmpty(optionSeries)||string.IsNullOrEmpty(instrumentId)||string.IsNullOrEmpty(hedgeFlag)||string.IsNullOrEmpty(buySell))
+                            if (string.IsNullOrEmpty(exchCodeText) || string.IsNullOrEmpty(productTypeText) || string.IsNullOrEmpty(productId) || string.IsNullOrEmpty(optionSeries) || string.IsNullOrEmpty(instrumentId) || string.IsNullOrEmpty(hedgeFlagText) || string.IsNullOrEmpty(buySellText))
                             {
                                 LogMessage(logAction, $"第{row}行数据不完整，交易所代码、产品类型、产品代码、期权系列、期权代码、投保标识、买卖标识为必填项");
                                 success = false;
                                 continue;
                             }
-                            
-                            // 验证枚举值
+
                             try
                             {
-                                // 交易所代码验证
-                                if (exchCode.Length != 1)
+                                // 交易所代码转换
+                                try
                                 {
-                                    LogMessage(logAction, $"第{row}行数据有误，交易所代码应为单个字符");
-                                    success = false;
-                                    continue;
+                                    char exchChar = EnumHelper.GetCharFromDescription<ExchangeEnum>(exchCodeText);
+                                    exchCode = exchChar.ToString();
                                 }
-                                var exchange = EnumHelper.GetEnumFromChar<ExchangeEnum>(exchCode[0]);
-                                
-                                // 产品类型验证
-                                if (productType.Length != 1)
+                                catch (Exception ex)
                                 {
-                                    LogMessage(logAction, $"第{row}行数据有误，产品类型应为单个字符");
-                                    success = false;
-                                    continue;
+                                    throw new ArgumentException($"交易所代码'{exchCodeText}'转换失败: {ex.Message}");
                                 }
-                                var prodType = EnumHelper.GetEnumFromChar<ProductTypeEnum>(productType[0]);
-                                
-                                // 投保标识验证
-                                if (hedgeFlag.Length != 1)
+
+                                // 产品类型转换
+                                try
                                 {
-                                    LogMessage(logAction, $"第{row}行数据有误，投保标识应为单个字符");
-                                    success = false;
-                                    continue;
+                                    char ptChar = EnumHelper.GetCharFromDescription<ProductTypeEnum>(productTypeText);
+                                    productType = ptChar.ToString();
                                 }
-                                var hedge = EnumHelper.GetEnumFromChar<HedgeFlagEnum>(hedgeFlag[0]);
-                                
-                                // 买卖标识验证
-                                if (buySell.Length != 1)
+                                catch (Exception ex)
                                 {
-                                    LogMessage(logAction, $"第{row}行数据有误，买卖标识应为单个字符");
-                                    success = false;
-                                    continue;
+                                    throw new ArgumentException($"产品类型'{productTypeText}'转换失败: {ex.Message}");
                                 }
-                                var bs = EnumHelper.GetEnumFromChar<BuySellEnum>(buySell[0]);
+
+                                // 投保标识转换
+                                try
+                                {
+                                    char hfChar = EnumHelper.GetCharFromDescription<HedgeFlagEnum>(hedgeFlagText);
+                                    hedgeFlag = hfChar.ToString();
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new ArgumentException($"投保标识'{hedgeFlagText}'转换失败: {ex.Message}");
+                                }
+
+                                // 买卖标识转换
+                                try
+                                {
+                                    char bsChar = EnumHelper.GetCharFromDescription<BuySellEnum>(buySellText);
+                                    buySell = bsChar.ToString();
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new ArgumentException($"买卖标识'{buySellText}'转换失败: {ex.Message}");
+                                }
                             }
                             catch (ArgumentException ex)
                             {
-                                LogMessage(logAction, $"第{row}行数据有误，{ex.Message}");
+                                LogMessage(logAction, $"第{row}行数据转换失败: {ex.Message}");
                                 success = false;
                                 continue;
                             }
-                            
+
                             // 检查数据是否重复
                             string key = $"{exchCode}|{productType}|{hedgeFlag}|{optionSeries}|{productId}|{instrumentId}|{buySell}";
                             if (exchangeDataCheck.ContainsKey(key))
@@ -149,7 +160,7 @@ namespace kingstar2femasfee
                                 continue;
                             }
                             exchangeDataCheck.Add(key, row);
-                            
+
                             // 创建数据对象
                             var data = new ExchangeTradeFeeDO
                             {
@@ -173,7 +184,7 @@ namespace kingstar2femasfee
                                 OperDate = DateTime.Now.ToString("yyyyMMdd"),
                                 OperTime = DateTime.Now.ToString("HHmmss")
                             };
-                            
+
                             resultList.Add(data);
                         }
                         catch (Exception ex)
@@ -183,7 +194,7 @@ namespace kingstar2femasfee
                         }
                     }
                 }
-                
+
                 return (success, resultList);
             }
             catch (Exception ex)
@@ -192,7 +203,7 @@ namespace kingstar2femasfee
                 return (false, resultList);
             }
         }
-        
+
         /// <summary>
         /// 解析小数值
         /// </summary>
@@ -200,13 +211,13 @@ namespace kingstar2femasfee
         {
             if (string.IsNullOrWhiteSpace(value))
                 return 0;
-            
+
             if (decimal.TryParse(value, out decimal result))
                 return result;
-            
+
             return 0;
         }
-        
+
         /// <summary>
         /// 记录日志
         /// </summary>
@@ -219,7 +230,7 @@ namespace kingstar2femasfee
             }
         }
     }
-    
+
     /// <summary>
     /// 交易所手续费率数据对象
     /// </summary>
@@ -245,4 +256,4 @@ namespace kingstar2femasfee
         public string OperDate { get; set; }
         public string OperTime { get; set; }
     }
-} 
+}
