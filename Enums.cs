@@ -106,42 +106,42 @@ namespace kingstar2femasfee
         /// <summary>
         /// 获取所有枚举项及其描述的字典
         /// </summary>
-        public static Dictionary<TEnum, string> GetEnumDescriptionDictionary<TEnum>() where TEnum : Enum
-        {
-            Dictionary<TEnum, string> dictionary = new Dictionary<TEnum, string>();
-            foreach (TEnum value in Enum.GetValues(typeof(TEnum)))
-            {
-                dictionary.Add(value, GetDescription(value));
-            }
-            return dictionary;
-        }
+        // public static Dictionary<TEnum, string> GetEnumDescriptionDictionary<TEnum>() where TEnum : Enum
+        // {
+        //     Dictionary<TEnum, string> dictionary = new Dictionary<TEnum, string>();
+        //     foreach (TEnum value in Enum.GetValues(typeof(TEnum)))
+        //     {
+        //         dictionary.Add(value, GetDescription(value));
+        //     }
+        //     return dictionary;
+        // }
 
         /// <summary>
         /// 根据char值获取对应的枚举项
         /// </summary>
-        public static TEnum GetEnumFromChar<TEnum>(char charValue) where TEnum : Enum
-        {
-            foreach (TEnum value in Enum.GetValues(typeof(TEnum)))
-            {
-                if (Convert.ToChar(value) == charValue)
-                {
-                    return value;
-                }
-            }
-            throw new ArgumentException($"在枚举{typeof(TEnum).Name}中找不到字符值'{charValue}'对应的枚举项");
-        }
+        // public static TEnum GetEnumFromChar<TEnum>(char charValue) where TEnum : Enum
+        // {
+        //     foreach (TEnum value in Enum.GetValues(typeof(TEnum)))
+        //     {
+        //         if (Convert.ToChar(value) == charValue)
+        //         {
+        //             return value;
+        //         }
+        //     }
+        //     throw new ArgumentException($"在枚举{typeof(TEnum).Name}中找不到字符值'{charValue}'对应的枚举项");
+        // }
 
         /// <summary>
         /// 根据字符串值获取对应的枚举项
         /// </summary>
-        public static TEnum GetEnumFromString<TEnum>(string stringValue) where TEnum : Enum
-        {
-            if (string.IsNullOrEmpty(stringValue) || stringValue.Length != 1)
-            {
-                throw new ArgumentException($"字符串值'{stringValue}'无效，应为单个字符");
-            }
-            return GetEnumFromChar<TEnum>(stringValue[0]);
-        }
+        // public static TEnum GetEnumFromString<TEnum>(string stringValue) where TEnum : Enum
+        // {
+        //     if (string.IsNullOrEmpty(stringValue) || stringValue.Length != 1)
+        //     {
+        //         throw new ArgumentException($"字符串值'{stringValue}'无效，应为单个字符");
+        //     }
+        //     return GetEnumFromChar<TEnum>(stringValue[0]);
+        // }
 
         /// <summary>
         /// 根据描述获取对应的枚举项
