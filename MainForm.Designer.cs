@@ -204,7 +204,7 @@
             this.textBox_log.Name = "textBox_log";
             this.textBox_log.ReadOnly = true;
             this.textBox_log.Size = new System.Drawing.Size(1318, 154);
-            this.textBox_log.TabIndex = 4;
+            this.textBox_log.TabIndex = 2;
             this.textBox_log.Text = "";
             // 
             // MainForm

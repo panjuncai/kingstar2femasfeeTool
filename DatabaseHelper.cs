@@ -33,6 +33,31 @@ namespace kingstar2femasfee
             public string UnderlyingType { get; set; }
         }
 
+        /// <summary>
+        /// 金士达特殊交易手续费数据对象
+        /// </summary>
+        public class KingstarSpecialTradeFeeDO
+        {
+            public string InvestorId { get; set; }
+            public string InvestorName { get; set; }
+            public string ExchCode { get; set; }
+            public string ProductType { get; set; }
+            public string ProductId { get; set; }
+            public string InstrumentId { get; set; }
+            public decimal OpenFeeRate { get; set; }
+            public decimal OpenFeeAmt { get; set; }
+            public decimal ShortOpenFeeRate { get; set; }
+            public decimal ShortOpenFeeAmt { get; set; }
+            public decimal OffsetFeeRate { get; set; }
+            public decimal OffsetFeeAmt { get; set; }
+            public decimal OtFeeRate { get; set; }
+            public decimal OtFeeAmt { get; set; }
+            public decimal ExecClearFeeRate { get; set; }
+            public decimal ExecClearFeeAmt { get; set; }
+            public string OperDate { get; set; }
+            public string OperTime { get; set; }
+        }
+
         public static void InitializeDatabase()
         {
             if (!File.Exists(dbName))
@@ -157,6 +182,43 @@ namespace kingstar2femasfee
                     CREATE UNIQUE INDEX IF NOT EXISTS idx_PRODUCT 
                     ON T_PRODUCT (EXCH_CODE, PRODUCT_TYPE, PRODUCT_ID)";
                     using (SQLiteCommand command = new SQLiteCommand(createProductIndex, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    // 创建金士达特殊交易手续费表
+                    string createKingstarSpecialTradeFeeTable = @"
+                    CREATE TABLE IF NOT EXISTS T_SPECIAL_TRADE_FEE_KINGSTAR (
+                      id INTEGER PRIMARY KEY AUTOINCREMENT,
+                      investor_id VARCHAR(18) NOT NULL,
+                      investor_name VARCHAR(100),
+                      exch_code VARCHAR(1),
+                      product_type VARCHAR(1) NOT NULL,
+                      product_id VARCHAR(10) NOT NULL,
+                      instrument_id VARCHAR(30) NOT NULL,
+                      open_fee_rate NUMERIC(17,8),
+                      open_fee_amt NUMERIC(17,8),
+                      short_open_fee_rate NUMERIC(17,8),
+                      short_open_fee_amt NUMERIC(17,8),
+                      offset_fee_rate NUMERIC(17,8),
+                      offset_fee_amt NUMERIC(17,8),
+                      ot_fee_rate NUMERIC(17,8),
+                      ot_fee_amt NUMERIC(17,8),
+                      exec_clear_fee_rate NUMERIC(17,8),
+                      exec_clear_fee_amt NUMERIC(17,8),
+                      oper_date VARCHAR(8),
+                      oper_time VARCHAR(8)
+                    )";
+                    using (SQLiteCommand command = new SQLiteCommand(createKingstarSpecialTradeFeeTable, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    
+                    // 创建金士达特殊交易手续费表唯一索引
+                    string createKingstarSpecialIndex = @"
+                    CREATE UNIQUE INDEX IF NOT EXISTS idx_SPECIAL_TRADE_FEE_KINGSTAR 
+                    ON T_SPECIAL_TRADE_FEE_KINGSTAR (INVESTOR_ID, PRODUCT_TYPE, PRODUCT_ID, INSTRUMENT_ID)";
+                    using (SQLiteCommand command = new SQLiteCommand(createKingstarSpecialIndex, connection))
                     {
                         command.ExecuteNonQuery();
                     }
@@ -556,6 +618,119 @@ namespace kingstar2femasfee
             catch (Exception ex)
             {
                 MessageBox.Show($"读取SQL文件异常: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 导入金士达客户手续费变更表数据
+        /// </summary>
+        /// <param name="dataList">金士达客户手续费变更表数据列表</param>
+        /// <param name="logAction">日志记录方法</param>
+        /// <returns>是否导入成功</returns>
+        public static bool ImportKingstarSpecialTradeFeeData(List<KingstarSpecialTradeFeeDO> dataList, ExcelHelper.LogMessageDelegate logAction)
+        {
+            if (dataList == null || dataList.Count == 0)
+            {
+                LogMessage(logAction, "没有金士达客户手续费变更表数据需要导入");
+                return false;
+            }
+            
+            try
+            {
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+                    
+                    using (SQLiteTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            // 清空旧数据
+                            string deleteSql = "DELETE FROM T_SPECIAL_TRADE_FEE_KINGSTAR";
+                            using (SQLiteCommand command = new SQLiteCommand(deleteSql, connection, transaction))
+                            {
+                                int rows = command.ExecuteNonQuery();
+                                LogMessage(logAction, $"已清除原有金士达客户手续费变更表数据 {rows} 条");
+                            }
+                            
+                            // 批量插入新数据
+                            string insertSql = @"
+                            INSERT INTO T_SPECIAL_TRADE_FEE_KINGSTAR 
+                            (investor_id, investor_name, exch_code, product_type, product_id, instrument_id, 
+                             open_fee_rate, open_fee_amt, short_open_fee_rate, short_open_fee_amt, 
+                             offset_fee_rate, offset_fee_amt, ot_fee_rate, ot_fee_amt, 
+                             exec_clear_fee_rate, exec_clear_fee_amt, oper_date, oper_time)
+                            VALUES 
+                            (@InvestorId, @InvestorName, @ExchCode, @ProductType, @ProductId, @InstrumentId,
+                             @OpenFeeRate, @OpenFeeAmt, @ShortOpenFeeRate, @ShortOpenFeeAmt,
+                             @OffsetFeeRate, @OffsetFeeAmt, @OtFeeRate, @OtFeeAmt,
+                             @ExecClearFeeRate, @ExecClearFeeAmt, @OperDate, @OperTime)";
+                            
+                            using (SQLiteCommand command = new SQLiteCommand(insertSql, connection, transaction))
+                            {
+                                // 创建参数
+                                command.Parameters.Add(new SQLiteParameter("@InvestorId", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@InvestorName", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@ExchCode", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@ProductType", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@ProductId", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@InstrumentId", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@OpenFeeRate", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OpenFeeAmt", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@ShortOpenFeeRate", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@ShortOpenFeeAmt", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OffsetFeeRate", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OffsetFeeAmt", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OtFeeRate", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OtFeeAmt", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@ExecClearFeeRate", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@ExecClearFeeAmt", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OperDate", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@OperTime", System.Data.DbType.String));
+                                
+                                // 逐条插入数据
+                                foreach (var data in dataList)
+                                {
+                                    command.Parameters["@InvestorId"].Value = data.InvestorId;
+                                    command.Parameters["@InvestorName"].Value = (object)data.InvestorName ?? DBNull.Value;
+                                    command.Parameters["@ExchCode"].Value = (object)data.ExchCode ?? DBNull.Value;
+                                    command.Parameters["@ProductType"].Value = data.ProductType;
+                                    command.Parameters["@ProductId"].Value = data.ProductId;
+                                    command.Parameters["@InstrumentId"].Value = data.InstrumentId;
+                                    command.Parameters["@OpenFeeRate"].Value = data.OpenFeeRate;
+                                    command.Parameters["@OpenFeeAmt"].Value = data.OpenFeeAmt;
+                                    command.Parameters["@ShortOpenFeeRate"].Value = data.ShortOpenFeeRate;
+                                    command.Parameters["@ShortOpenFeeAmt"].Value = data.ShortOpenFeeAmt;
+                                    command.Parameters["@OffsetFeeRate"].Value = data.OffsetFeeRate;
+                                    command.Parameters["@OffsetFeeAmt"].Value = data.OffsetFeeAmt;
+                                    command.Parameters["@OtFeeRate"].Value = data.OtFeeRate;
+                                    command.Parameters["@OtFeeAmt"].Value = data.OtFeeAmt;
+                                    command.Parameters["@ExecClearFeeRate"].Value = data.ExecClearFeeRate;
+                                    command.Parameters["@ExecClearFeeAmt"].Value = data.ExecClearFeeAmt;
+                                    command.Parameters["@OperDate"].Value = data.OperDate;
+                                    command.Parameters["@OperTime"].Value = data.OperTime;
+                                    
+                                    command.ExecuteNonQuery();
+                                }
+                            }
+                            
+                            transaction.Commit();
+                            LogMessage(logAction, $"成功导入金士达客户手续费变更表数据 {dataList.Count} 条");
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            LogMessage(logAction, $"导入金士达客户手续费变更表数据失败: {ex.Message}");
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogMessage(logAction, $"操作数据库异常: {ex.Message}");
                 return false;
             }
         }

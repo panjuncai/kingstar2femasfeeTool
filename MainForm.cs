@@ -16,6 +16,14 @@ namespace kingstar2femasfee
         // 日志记录集合，用于倒序显示
         private List<string> logMessages = new List<string>();
         
+        // 定义日志级别
+        private enum LogLevel
+        {
+            Info,
+            Warning,
+            Error
+        }
+        
         public MainForm()
         {
             InitializeComponent();
@@ -99,6 +107,10 @@ namespace kingstar2femasfee
             
             // 处理特殊交易手续费率数据
             ProcessSpecialTradeFeeData(femasDir);
+            
+            // 处理金士达客户交易手续费率数据
+            ProcessKingstarSpecialTradeFeeData(kingstarDir);
+
         }
         
         /// <summary>
@@ -164,14 +176,65 @@ namespace kingstar2femasfee
         }
         
         /// <summary>
+        /// 处理金士达客户交易手续费率数据(期货)
+        /// </summary>
+        private void ProcessKingstarSpecialTradeFeeData(string kingstarDir)
+        {
+            LogInfo("开始处理金士达客户交易手续费率数据（期货）...");
+            
+            // 读取Excel文件
+            var (success, dataList) = ExcelHelper.ReadKingstarSpecialTradeFeeExcel(kingstarDir, LogInfo);
+            
+            LogInfo("开始处理金士达客户交易手续费率数据（期权）...");
+            var (successOptions, dataListOptions) = ExcelHelper.ReadKingstarSpecialTradeFeeExcelOptions(kingstarDir, LogInfo);
+
+            dataList = dataList.Concat(dataListOptions).ToList();
+            
+            // 如果读取成功且数据验证通过，则导入数据库
+            if (success && dataList.Count > 0)
+            {
+                LogInfo($"数据校验通过，准备导入 {dataList.Count} 条金士达客户交易手续费率数据");
+                bool importSuccess = DatabaseHelper.ImportKingstarSpecialTradeFeeData(dataList, LogInfo);
+                
+                if (importSuccess)
+                {
+                    LogInfo("金士达客户交易手续费率数据导入成功");
+                }
+                else
+                {
+                    LogInfo("金士达客户交易手续费率数据导入失败");
+                }
+            }
+            else
+            {
+                LogInfo("数据校验未通过，请检查Excel文件");
+            }
+        }
+        
+        /// <summary>
         /// 记录日志信息
         /// </summary>
         private void LogInfo(string message)
         {
+            // 检查日志内容是否包含错误关键词
+            //LogLevel logLevel;
+            //if (message.Contains("失败") || message.Contains("未通过") || message.Contains("错误") || message.Contains("异常") || message.Contains("不完整"))
+            //{
+            //    logLevel = LogLevel.Error;
+            //}
+            //else if (message.Contains("警告") || message.Contains("注意"))
+            //{
+            //    logLevel = LogLevel.Warning;
+            //}
+            //else
+            //{
+            //    logLevel = LogLevel.Info;
+            //}
+            
             // 添加时间戳
             string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {message}";
             
-            // 添加到日志集合
+            // 添加到日志集合，同时记录日志级别
             logMessages.Insert(0, logEntry);
             
             // 更新日志文本框
@@ -192,12 +255,57 @@ namespace kingstar2femasfee
         /// </summary>
         private void UpdateLogTextBox()
         {
-            StringBuilder sb = new StringBuilder();
+            // 确保textBox_log是RichTextBox类型
+            if (!(textBox_log is RichTextBox richTextBox))
+            {
+                // 如果不是RichTextBox，则使用普通方式更新
+                StringBuilder sb = new StringBuilder();
+                foreach (string log in logMessages)
+                {
+                    sb.AppendLine(log);
+                }
+                textBox_log.Text = sb.ToString();
+                return;
+            }
+            
+            // 记住最初的滚动位置
+            int initialScrollValue = richTextBox.GetPositionFromCharIndex(0).Y;
+            
+            // 清空当前内容
+            richTextBox.Clear();
+            
+            // 设置默认格式
+            richTextBox.SelectionFont = new System.Drawing.Font(richTextBox.Font, System.Drawing.FontStyle.Regular);
+            richTextBox.SelectionColor = System.Drawing.Color.Black;
+            
+            // 逐行添加日志，并根据日志内容设置格式
             foreach (string log in logMessages)
             {
-                sb.AppendLine(log);
+                int startIndex = richTextBox.TextLength;
+                richTextBox.AppendText(log + Environment.NewLine);
+                
+                // 检查是否包含错误关键词，如果包含则设置为红色加粗
+                if (log.Contains("失败") || log.Contains("未通过") || log.Contains("错误") || log.Contains("异常") || log.Contains("不完整"))
+                {
+                    richTextBox.SelectionStart = startIndex;
+                    richTextBox.SelectionLength = log.Length;
+                    richTextBox.SelectionFont = new System.Drawing.Font(richTextBox.Font, System.Drawing.FontStyle.Bold);
+                    richTextBox.SelectionColor = System.Drawing.Color.Red;
+                }
+                // 警告信息设置为橙色
+                else if (log.Contains("警告") || log.Contains("注意"))
+                {
+                    richTextBox.SelectionStart = startIndex;
+                    richTextBox.SelectionLength = log.Length;
+                    richTextBox.SelectionFont = new System.Drawing.Font(richTextBox.Font, System.Drawing.FontStyle.Bold);
+                    richTextBox.SelectionColor = System.Drawing.Color.Orange;
+                }
             }
-            textBox_log.Text = sb.ToString();
+            
+            // 滚动到最新的日志（顶部）
+            richTextBox.SelectionStart = 0;
+            richTextBox.SelectionLength = 0;
+            richTextBox.ScrollToCaret();
         }
         
         
