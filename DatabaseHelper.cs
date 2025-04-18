@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using static kingstar2femasfee.Utils;
 
 namespace kingstar2femasfee
 {
@@ -12,52 +13,9 @@ namespace kingstar2femasfee
         private static string dbName = "kingstar2femasfee.db";
         private static string connectionString = $"Data Source={dbName};Version=3;";
 
-        
         /// <summary>
-        /// 产品数据对象
+        /// 初始化数据库
         /// </summary>
-        public class ProductDO
-        {
-            public string ExchCode { get; set; }
-            public string ProductType { get; set; }
-            public string ProductId { get; set; }
-            public string ProductName { get; set; }
-            public string UnderlyingId { get; set; }
-            public decimal? UnderlyingMultiple { get; set; }
-            public string OfferCurrency { get; set; }
-            public string SettleCurrency { get; set; }
-            public string IsSpecial { get; set; }
-            public decimal? VolumeMultiple { get; set; }
-            public string MarketId { get; set; }
-            public string IsTradingRightSpecial { get; set; }
-            public string UnderlyingType { get; set; }
-        }
-
-        /// <summary>
-        /// 金士达特殊交易手续费数据对象
-        /// </summary>
-        public class KingstarSpecialTradeFeeDO
-        {
-            public string InvestorId { get; set; }
-            public string InvestorName { get; set; }
-            public string ExchCode { get; set; }
-            public string ProductType { get; set; }
-            public string ProductId { get; set; }
-            public string InstrumentId { get; set; }
-            public decimal OpenFeeRate { get; set; }
-            public decimal OpenFeeAmt { get; set; }
-            public decimal ShortOpenFeeRate { get; set; }
-            public decimal ShortOpenFeeAmt { get; set; }
-            public decimal OffsetFeeRate { get; set; }
-            public decimal OffsetFeeAmt { get; set; }
-            public decimal OtFeeRate { get; set; }
-            public decimal OtFeeAmt { get; set; }
-            public decimal ExecClearFeeRate { get; set; }
-            public decimal ExecClearFeeAmt { get; set; }
-            public string OperDate { get; set; }
-            public string OperTime { get; set; }
-        }
-
         public static void InitializeDatabase()
         {
             if (!File.Exists(dbName))
@@ -238,122 +196,12 @@ namespace kingstar2femasfee
                 }
             }
         }
-
+        
         /// <summary>
-        /// 导入交易所手续费率数据
+        /// 保存配置
         /// </summary>
-        /// <param name="dataList">交易所手续费率数据列表</param>
-        /// <param name="logAction">日志记录方法</param>
-        /// <returns>是否导入成功</returns>
-        public static bool ImportExchangeTradeFeeData(List<ExchangeTradeFeeDO> dataList, ExcelHelper.LogMessageDelegate logAction)
-        {
-            if (dataList == null || dataList.Count == 0)
-            {
-                LogMessage(logAction, "没有数据需要导入");
-                return false;
-            }
-            
-            try
-            {
-                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
-                    
-                    using (SQLiteTransaction transaction = connection.BeginTransaction())
-                    {
-                        try
-                        {
-                            // 清空旧数据
-                            string deleteSql = "DELETE FROM T_EXCHANGE_TRADE_FEE";
-                            using (SQLiteCommand command = new SQLiteCommand(deleteSql, connection, transaction))
-                            {
-                                int rows = command.ExecuteNonQuery();
-                                LogMessage(logAction, $"已清除原有交易所手续费率数据 {rows} 条");
-                            }
-                            
-                            // 批量插入新数据
-                            string insertSql = @"
-                            INSERT INTO T_EXCHANGE_TRADE_FEE 
-                            (exch_code, product_type, product_id, option_series_id, instrument_id, hedge_flag, buy_sell, 
-                             open_fee_rate, open_fee_amt, short_open_fee_rate, short_open_fee_amt, 
-                             offset_fee_rate, offset_fee_amt, ot_fee_rate, ot_fee_amt, 
-                             exec_clear_fee_rate, exec_clear_fee_amt, oper_date, oper_time)
-                            VALUES 
-                            (@ExchCode, @ProductType, @ProductId, @OptionSeriesId, @InstrumentId, @HedgeFlag, @BuySell,
-                             @OpenFeeRate, @OpenFeeAmt, @ShortOpenFeeRate, @ShortOpenFeeAmt,
-                             @OffsetFeeRate, @OffsetFeeAmt, @OtFeeRate, @OtFeeAmt,
-                             @ExecClearFeeRate, @ExecClearFeeAmt, @OperDate, @OperTime)";
-                            
-                            using (SQLiteCommand command = new SQLiteCommand(insertSql, connection, transaction))
-                            {
-                                // 创建参数
-                                command.Parameters.Add(new SQLiteParameter("@ExchCode", System.Data.DbType.String));
-                                command.Parameters.Add(new SQLiteParameter("@ProductType", System.Data.DbType.String));
-                                command.Parameters.Add(new SQLiteParameter("@ProductId", System.Data.DbType.String));
-                                command.Parameters.Add(new SQLiteParameter("@OptionSeriesId", System.Data.DbType.String));
-                                command.Parameters.Add(new SQLiteParameter("@InstrumentId", System.Data.DbType.String));
-                                command.Parameters.Add(new SQLiteParameter("@HedgeFlag", System.Data.DbType.String));
-                                command.Parameters.Add(new SQLiteParameter("@BuySell", System.Data.DbType.String));
-                                command.Parameters.Add(new SQLiteParameter("@OpenFeeRate", System.Data.DbType.Decimal));
-                                command.Parameters.Add(new SQLiteParameter("@OpenFeeAmt", System.Data.DbType.Decimal));
-                                command.Parameters.Add(new SQLiteParameter("@ShortOpenFeeRate", System.Data.DbType.Decimal));
-                                command.Parameters.Add(new SQLiteParameter("@ShortOpenFeeAmt", System.Data.DbType.Decimal));
-                                command.Parameters.Add(new SQLiteParameter("@OffsetFeeRate", System.Data.DbType.Decimal));
-                                command.Parameters.Add(new SQLiteParameter("@OffsetFeeAmt", System.Data.DbType.Decimal));
-                                command.Parameters.Add(new SQLiteParameter("@OtFeeRate", System.Data.DbType.Decimal));
-                                command.Parameters.Add(new SQLiteParameter("@OtFeeAmt", System.Data.DbType.Decimal));
-                                command.Parameters.Add(new SQLiteParameter("@ExecClearFeeRate", System.Data.DbType.Decimal));
-                                command.Parameters.Add(new SQLiteParameter("@ExecClearFeeAmt", System.Data.DbType.Decimal));
-                                command.Parameters.Add(new SQLiteParameter("@OperDate", System.Data.DbType.String));
-                                command.Parameters.Add(new SQLiteParameter("@OperTime", System.Data.DbType.String));
-                                
-                                // 逐条插入数据
-                                foreach (var data in dataList)
-                                {
-                                    command.Parameters["@ExchCode"].Value = data.ExchCode;
-                                    command.Parameters["@ProductType"].Value = data.ProductType;
-                                    command.Parameters["@ProductId"].Value = data.ProductId;
-                                    command.Parameters["@OptionSeriesId"].Value = data.OptionSeriesId;
-                                    command.Parameters["@InstrumentId"].Value = data.InstrumentId;
-                                    command.Parameters["@HedgeFlag"].Value = data.HedgeFlag;
-                                    command.Parameters["@BuySell"].Value = data.BuySell;
-                                    command.Parameters["@OpenFeeRate"].Value = data.OpenFeeRate;
-                                    command.Parameters["@OpenFeeAmt"].Value = data.OpenFeeAmt;
-                                    command.Parameters["@ShortOpenFeeRate"].Value = data.ShortOpenFeeRate;
-                                    command.Parameters["@ShortOpenFeeAmt"].Value = data.ShortOpenFeeAmt;
-                                    command.Parameters["@OffsetFeeRate"].Value = data.OffsetFeeRate;
-                                    command.Parameters["@OffsetFeeAmt"].Value = data.OffsetFeeAmt;
-                                    command.Parameters["@OtFeeRate"].Value = data.OtFeeRate;
-                                    command.Parameters["@OtFeeAmt"].Value = data.OtFeeAmt;
-                                    command.Parameters["@ExecClearFeeRate"].Value = data.ExecClearFeeRate;
-                                    command.Parameters["@ExecClearFeeAmt"].Value = data.ExecClearFeeAmt;
-                                    command.Parameters["@OperDate"].Value = data.OperDate;
-                                    command.Parameters["@OperTime"].Value = data.OperTime;
-                                    
-                                    command.ExecuteNonQuery();
-                                }
-                            }
-                            
-                            transaction.Commit();
-                            LogMessage(logAction, $"成功导入交易所手续费率数据 {dataList.Count} 条");
-                            return true;
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            LogMessage(logAction, $"导入交易所手续费率数据失败: {ex.Message}");
-                            return false;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogMessage(logAction, $"操作数据库异常: {ex.Message}");
-                return false;
-            }
-        }
-
+        /// <param name="femasDir">femas目录</param>
+        /// <param name="kingstarDir">金士达目录</param>
         public static void SaveConfig(string femasDir, string kingstarDir)
         {
             try
@@ -376,6 +224,10 @@ namespace kingstar2femasfee
             }
         }
 
+        /// <summary>
+        /// 加载配置
+        /// </summary>
+        /// <returns>femas目录, 金士达目录</returns>
         public static (string femasDir, string kingstarDir) LoadConfig()
         {
             string femasDir = string.Empty;
@@ -409,13 +261,199 @@ namespace kingstar2femasfee
         }
 
         /// <summary>
-        /// 记录日志
+        /// 导入产品数据
         /// </summary>
-        private static void LogMessage(ExcelHelper.LogMessageDelegate logAction, string message)
+        /// <param name="sqlFilePath">SQL文件路径</param>
+        /// <returns>是否导入成功</returns>
+        public static bool ImportProductData(string sqlFilePath)
         {
-            if (logAction != null)
+            if (!File.Exists(sqlFilePath))
             {
-                logAction(message);
+                MessageBox.Show($"产品数据SQL文件不存在: {sqlFilePath}");
+                return false;
+            }
+
+            try
+            {
+                // 读取SQL文件内容
+                string sqlContent = File.ReadAllText(sqlFilePath, Encoding.UTF8);
+
+                // 导入数据库
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (SQLiteTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            // 清空旧数据
+                            string deleteSql = "DELETE FROM T_PRODUCT";
+                            using (SQLiteCommand command = new SQLiteCommand(deleteSql, connection, transaction))
+                            {
+                                int rows = command.ExecuteNonQuery();
+                                // 使用MessageBox输出日志
+                                //Console.WriteLine($"已清除原有产品数据 {rows} 条");
+                            }
+
+                            // 按分号分割SQL语句
+                            string[] sqlStatements = sqlContent.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            int successCount = 0;
+
+                            foreach (string sql in sqlStatements)
+                            {
+                                string trimmedSql = sql.Trim();
+                                if (string.IsNullOrWhiteSpace(trimmedSql))
+                                    continue;
+
+                                // 执行SQL语句
+                                using (SQLiteCommand command = new SQLiteCommand(trimmedSql, connection, transaction))
+                                {
+                                    try
+                                    {
+                                        command.ExecuteNonQuery();
+                                        successCount++;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // 使用MessageBox输出日志
+                                        MessageBox.Show($"执行SQL语句失败: {ex.Message}\nSQL: {trimmedSql}");
+                                    }
+                                }
+                            }
+
+                            transaction.Commit();
+                            MessageBox.Show($"成功导入产品数据 {successCount} 条");
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            MessageBox.Show($"导入产品数据失败: {ex.Message}");
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"读取SQL文件异常: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 导入交易所手续费率数据
+        /// </summary>
+        /// <param name="dataList">交易所手续费率数据列表</param>
+        /// <param name="logAction">日志记录方法</param>
+        /// <returns>是否导入成功</returns>
+        public static bool ImportExchangeTradeFeeData(List<ExchangeTradeFeeDO> dataList, LogMessageDelegate logAction)
+        {
+            if (dataList == null || dataList.Count == 0)
+            {
+                LogMessage(logAction, "没有数据需要导入");
+                return false;
+            }
+
+            try
+            {
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (SQLiteTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            // 清空旧数据
+                            string deleteSql = "DELETE FROM T_EXCHANGE_TRADE_FEE";
+                            using (SQLiteCommand command = new SQLiteCommand(deleteSql, connection, transaction))
+                            {
+                                int rows = command.ExecuteNonQuery();
+                                LogMessage(logAction, $"已清除原有交易所手续费率数据 {rows} 条");
+                            }
+
+                            // 批量插入新数据
+                            string insertSql = @"
+                            INSERT INTO T_EXCHANGE_TRADE_FEE 
+                            (exch_code, product_type, product_id, option_series_id, instrument_id, hedge_flag, buy_sell, 
+                             open_fee_rate, open_fee_amt, short_open_fee_rate, short_open_fee_amt, 
+                             offset_fee_rate, offset_fee_amt, ot_fee_rate, ot_fee_amt, 
+                             exec_clear_fee_rate, exec_clear_fee_amt, oper_date, oper_time)
+                            VALUES 
+                            (@ExchCode, @ProductType, @ProductId, @OptionSeriesId, @InstrumentId, @HedgeFlag, @BuySell,
+                             @OpenFeeRate, @OpenFeeAmt, @ShortOpenFeeRate, @ShortOpenFeeAmt,
+                             @OffsetFeeRate, @OffsetFeeAmt, @OtFeeRate, @OtFeeAmt,
+                             @ExecClearFeeRate, @ExecClearFeeAmt, @OperDate, @OperTime)";
+
+                            using (SQLiteCommand command = new SQLiteCommand(insertSql, connection, transaction))
+                            {
+                                // 创建参数
+                                command.Parameters.Add(new SQLiteParameter("@ExchCode", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@ProductType", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@ProductId", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@OptionSeriesId", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@InstrumentId", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@HedgeFlag", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@BuySell", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@OpenFeeRate", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OpenFeeAmt", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@ShortOpenFeeRate", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@ShortOpenFeeAmt", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OffsetFeeRate", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OffsetFeeAmt", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OtFeeRate", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OtFeeAmt", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@ExecClearFeeRate", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@ExecClearFeeAmt", System.Data.DbType.Decimal));
+                                command.Parameters.Add(new SQLiteParameter("@OperDate", System.Data.DbType.String));
+                                command.Parameters.Add(new SQLiteParameter("@OperTime", System.Data.DbType.String));
+
+                                // 逐条插入数据
+                                foreach (var data in dataList)
+                                {
+                                    command.Parameters["@ExchCode"].Value = data.ExchCode;
+                                    command.Parameters["@ProductType"].Value = data.ProductType;
+                                    command.Parameters["@ProductId"].Value = data.ProductId;
+                                    command.Parameters["@OptionSeriesId"].Value = data.OptionSeriesId;
+                                    command.Parameters["@InstrumentId"].Value = data.InstrumentId;
+                                    command.Parameters["@HedgeFlag"].Value = data.HedgeFlag;
+                                    command.Parameters["@BuySell"].Value = data.BuySell;
+                                    command.Parameters["@OpenFeeRate"].Value = data.OpenFeeRate;
+                                    command.Parameters["@OpenFeeAmt"].Value = data.OpenFeeAmt;
+                                    command.Parameters["@ShortOpenFeeRate"].Value = data.ShortOpenFeeRate;
+                                    command.Parameters["@ShortOpenFeeAmt"].Value = data.ShortOpenFeeAmt;
+                                    command.Parameters["@OffsetFeeRate"].Value = data.OffsetFeeRate;
+                                    command.Parameters["@OffsetFeeAmt"].Value = data.OffsetFeeAmt;
+                                    command.Parameters["@OtFeeRate"].Value = data.OtFeeRate;
+                                    command.Parameters["@OtFeeAmt"].Value = data.OtFeeAmt;
+                                    command.Parameters["@ExecClearFeeRate"].Value = data.ExecClearFeeRate;
+                                    command.Parameters["@ExecClearFeeAmt"].Value = data.ExecClearFeeAmt;
+                                    command.Parameters["@OperDate"].Value = data.OperDate;
+                                    command.Parameters["@OperTime"].Value = data.OperTime;
+
+                                    command.ExecuteNonQuery();
+                                }
+                            }
+
+                            transaction.Commit();
+                            LogMessage(logAction, $"成功导入交易所手续费率数据 {dataList.Count} 条");
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            LogMessage(logAction, $"导入交易所手续费率数据失败: {ex.Message}");
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogMessage(logAction, $"操作数据库异常: {ex.Message}");
+                return false;
             }
         }
 
@@ -425,7 +463,7 @@ namespace kingstar2femasfee
         /// <param name="dataList">特殊交易手续费率数据列表</param>
         /// <param name="logAction">日志记录方法</param>
         /// <returns>是否导入成功</returns>
-        public static bool ImportSpecialTradeFeeData(List<SpecialTradeFeeDO> dataList, ExcelHelper.LogMessageDelegate logAction)
+        public static bool ImportSpecialTradeFeeData(List<SpecialTradeFeeDO> dataList, LogMessageDelegate logAction)
         {
             if (dataList == null || dataList.Count == 0)
             {
@@ -541,94 +579,12 @@ namespace kingstar2femasfee
         }
 
         /// <summary>
-        /// 导入产品数据
-        /// </summary>
-        /// <param name="sqlFilePath">SQL文件路径</param>
-        /// <returns>是否导入成功</returns>
-        public static bool ImportProductData(string sqlFilePath)
-        {
-            if (!File.Exists(sqlFilePath))
-            {
-                MessageBox.Show($"产品数据SQL文件不存在: {sqlFilePath}");
-                return false;
-            }
-            
-            try
-            {
-                // 读取SQL文件内容
-                string sqlContent = File.ReadAllText(sqlFilePath, Encoding.UTF8);
-                
-                // 导入数据库
-                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
-                {
-                    connection.Open();
-                    
-                    using (SQLiteTransaction transaction = connection.BeginTransaction())
-                    {
-                        try
-                        {
-                            // 清空旧数据
-                            string deleteSql = "DELETE FROM T_PRODUCT";
-                            using (SQLiteCommand command = new SQLiteCommand(deleteSql, connection, transaction))
-                            {
-                                int rows = command.ExecuteNonQuery();
-                                // 使用MessageBox输出日志
-                                //Console.WriteLine($"已清除原有产品数据 {rows} 条");
-                            }
-                            
-                            // 按分号分割SQL语句
-                            string[] sqlStatements = sqlContent.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                            int successCount = 0;
-                            
-                            foreach (string sql in sqlStatements)
-                            {
-                                string trimmedSql = sql.Trim();
-                                if (string.IsNullOrWhiteSpace(trimmedSql))
-                                    continue;
-                                
-                                // 执行SQL语句
-                                using (SQLiteCommand command = new SQLiteCommand(trimmedSql, connection, transaction))
-                                {
-                                    try
-                                    {
-                                        command.ExecuteNonQuery();
-                                        successCount++;
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        // 使用MessageBox输出日志
-                                        MessageBox.Show($"执行SQL语句失败: {ex.Message}\nSQL: {trimmedSql}");
-                                    }
-                                }
-                            }
-                            
-                            transaction.Commit();
-                            MessageBox.Show($"成功导入产品数据 {successCount} 条");
-                            return true;
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            MessageBox.Show($"导入产品数据失败: {ex.Message}");
-                            return false;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"读取SQL文件异常: {ex.Message}");
-                return false;
-            }
-        }
-
-        /// <summary>
         /// 导入金士达客户手续费变更表数据
         /// </summary>
         /// <param name="dataList">金士达客户手续费变更表数据列表</param>
         /// <param name="logAction">日志记录方法</param>
         /// <returns>是否导入成功</returns>
-        public static bool ImportKingstarSpecialTradeFeeData(List<KingstarSpecialTradeFeeDO> dataList, ExcelHelper.LogMessageDelegate logAction)
+        public static bool ImportKingstarSpecialTradeFeeData(List<KingstarSpecialTradeFeeDO> dataList, LogMessageDelegate logAction)
         {
             if (dataList == null || dataList.Count == 0)
             {
@@ -733,6 +689,73 @@ namespace kingstar2femasfee
                 LogMessage(logAction, $"操作数据库异常: {ex.Message}");
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 获取交易所手续费率数据
+        /// </summary>
+        /// <returns>交易所手续费率数据列表</returns>
+        public static List<ExchangeTradeFeeDO> GetExchangeTradeFeeData()
+        {
+            List<ExchangeTradeFeeDO> resultList = new List<ExchangeTradeFeeDO>();
+            
+            try
+            {
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+                    
+                    string selectSql = @"
+                    SELECT 
+                        exch_code, product_type, product_id, option_series_id, instrument_id, 
+                        hedge_flag, buy_sell, open_fee_rate, open_fee_amt, 
+                        short_open_fee_rate, short_open_fee_amt, offset_fee_rate, offset_fee_amt, 
+                        ot_fee_rate, ot_fee_amt, exec_clear_fee_rate, exec_clear_fee_amt, 
+                        oper_date, oper_time
+                    FROM T_EXCHANGE_TRADE_FEE
+                    ORDER BY exch_code, product_type, product_id, option_series_id, instrument_id, hedge_flag, buy_sell";
+                    
+                    using (SQLiteCommand command = new SQLiteCommand(selectSql, connection))
+                    {
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var data = new ExchangeTradeFeeDO
+                                {
+                                    ExchCode = reader["exch_code"].ToString(),
+                                    ProductType = reader["product_type"].ToString(),
+                                    ProductId = reader["product_id"].ToString(),
+                                    OptionSeriesId = reader["option_series_id"].ToString(),
+                                    InstrumentId = reader["instrument_id"].ToString(),
+                                    HedgeFlag = reader["hedge_flag"].ToString(),
+                                    BuySell = reader["buy_sell"].ToString(),
+                                    OpenFeeRate = Convert.ToDecimal(reader["open_fee_rate"]),
+                                    OpenFeeAmt = Convert.ToDecimal(reader["open_fee_amt"]),
+                                    ShortOpenFeeRate = Convert.ToDecimal(reader["short_open_fee_rate"]),
+                                    ShortOpenFeeAmt = Convert.ToDecimal(reader["short_open_fee_amt"]),
+                                    OffsetFeeRate = Convert.ToDecimal(reader["offset_fee_rate"]),
+                                    OffsetFeeAmt = Convert.ToDecimal(reader["offset_fee_amt"]),
+                                    OtFeeRate = Convert.ToDecimal(reader["ot_fee_rate"]),
+                                    OtFeeAmt = Convert.ToDecimal(reader["ot_fee_amt"]),
+                                    ExecClearFeeRate = Convert.ToDecimal(reader["exec_clear_fee_rate"]),
+                                    ExecClearFeeAmt = Convert.ToDecimal(reader["exec_clear_fee_amt"]),
+                                    OperDate = reader["oper_date"].ToString(),
+                                    OperTime = reader["oper_time"].ToString()
+                                };
+                                
+                                resultList.Add(data);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"获取交易所手续费率数据异常: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
+            return resultList;
         }
     }
 } 

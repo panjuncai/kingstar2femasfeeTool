@@ -32,6 +32,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.dataGridView_exchange_fee = new System.Windows.Forms.DataGridView();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -43,6 +44,8 @@
             this.button_calc = new System.Windows.Forms.Button();
             this.textBox_log = new System.Windows.Forms.RichTextBox();
             this.tabControl1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_exchange_fee)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -74,6 +77,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.dataGridView_exchange_fee);
             this.tabPage2.Location = new System.Drawing.Point(4, 28);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
@@ -82,6 +86,20 @@
             this.tabPage2.TabIndex = 0;
             this.tabPage2.Text = "飞马交易所手续费率";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView_exchange_fee
+            // 
+            this.dataGridView_exchange_fee.AllowUserToAddRows = false;
+            this.dataGridView_exchange_fee.AllowUserToDeleteRows = false;
+            this.dataGridView_exchange_fee.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_exchange_fee.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView_exchange_fee.Location = new System.Drawing.Point(4, 4);
+            this.dataGridView_exchange_fee.Name = "dataGridView_exchange_fee";
+            this.dataGridView_exchange_fee.ReadOnly = true;
+            this.dataGridView_exchange_fee.RowHeadersWidth = 62;
+            this.dataGridView_exchange_fee.RowTemplate.Height = 30;
+            this.dataGridView_exchange_fee.Size = new System.Drawing.Size(1300, 410);
+            this.dataGridView_exchange_fee.TabIndex = 0;
             // 
             // tabPage3
             // 
@@ -219,6 +237,8 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "金士达转飞马浮动费率工具";
             this.tabControl1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_exchange_fee)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
@@ -241,6 +261,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Button button_calc;
         private System.Windows.Forms.RichTextBox textBox_log;
+        private System.Windows.Forms.DataGridView dataGridView_exchange_fee;
     }
 }
 
