@@ -30,11 +30,21 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.dataGridView_exchange_fee = new System.Windows.Forms.DataGridView();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.dataGridView_kingstar_special_fee = new System.Windows.Forms.DataGridView();
+            this.label_kingstar_special_fee_count = new System.Windows.Forms.Label();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.dataGridView_exchange_fee = new System.Windows.Forms.DataGridView();
+            this.label_exchange_fee_count = new System.Windows.Forms.Label();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.dataGridView_femas_special_fee = new System.Windows.Forms.DataGridView();
+            this.label_femas_special_fee_count = new System.Windows.Forms.Label();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.dataGridView_kingstar_float = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btn_femas_dir = new System.Windows.Forms.Button();
@@ -44,18 +54,28 @@
             this.button_calc = new System.Windows.Forms.Button();
             this.textBox_log = new System.Windows.Forms.RichTextBox();
             this.tabControl1.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_kingstar_special_fee)).BeginInit();
             this.tabPage2.SuspendLayout();
+            this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_exchange_fee)).BeginInit();
+            this.tabPage3.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_femas_special_fee)).BeginInit();
+            this.tabPage1.SuspendLayout();
+            this.tableLayoutPanel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_kingstar_float)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(4, 49);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
@@ -64,20 +84,56 @@
             this.tabControl1.Size = new System.Drawing.Size(1316, 450);
             this.tabControl1.TabIndex = 0;
             // 
-            // tabPage1
+            // tabPage4
             // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 28);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(1308, 418);
-            this.tabPage1.TabIndex = 1;
-            this.tabPage1.Text = "金士达客户手续费率";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabPage4.Controls.Add(this.tableLayoutPanel3);
+            this.tabPage4.Location = new System.Drawing.Point(4, 28);
+            this.tabPage4.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(1308, 418);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "金士达绝对值";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 1;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Controls.Add(this.dataGridView_kingstar_special_fee, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.label_kingstar_special_fee_count, 0, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(1308, 418);
+            this.tableLayoutPanel3.TabIndex = 1;
+            // 
+            // dataGridView_kingstar_special_fee
+            // 
+            this.dataGridView_kingstar_special_fee.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_kingstar_special_fee.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView_kingstar_special_fee.Location = new System.Drawing.Point(3, 33);
+            this.dataGridView_kingstar_special_fee.Name = "dataGridView_kingstar_special_fee";
+            this.dataGridView_kingstar_special_fee.RowHeadersWidth = 62;
+            this.dataGridView_kingstar_special_fee.RowTemplate.Height = 30;
+            this.dataGridView_kingstar_special_fee.Size = new System.Drawing.Size(1302, 382);
+            this.dataGridView_kingstar_special_fee.TabIndex = 0;
+            // 
+            // label_kingstar_special_fee_count
+            // 
+            this.label_kingstar_special_fee_count.AutoSize = true;
+            this.label_kingstar_special_fee_count.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_kingstar_special_fee_count.Location = new System.Drawing.Point(3, 0);
+            this.label_kingstar_special_fee_count.Name = "label_kingstar_special_fee_count";
+            this.label_kingstar_special_fee_count.Size = new System.Drawing.Size(103, 18);
+            this.label_kingstar_special_fee_count.TabIndex = 1;
+            this.label_kingstar_special_fee_count.Text = "记录条数：";
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.dataGridView_exchange_fee);
+            this.tabPage2.Controls.Add(this.tableLayoutPanel4);
             this.tabPage2.Location = new System.Drawing.Point(4, 28);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
@@ -87,39 +143,131 @@
             this.tabPage2.Text = "飞马交易所手续费率";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // tableLayoutPanel4
+            // 
+            this.tableLayoutPanel4.ColumnCount = 1;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel4.Controls.Add(this.dataGridView_exchange_fee, 0, 1);
+            this.tableLayoutPanel4.Controls.Add(this.label_exchange_fee_count, 0, 0);
+            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(4, 4);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.RowCount = 2;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(1300, 410);
+            this.tableLayoutPanel4.TabIndex = 1;
+            // 
             // dataGridView_exchange_fee
             // 
             this.dataGridView_exchange_fee.AllowUserToAddRows = false;
             this.dataGridView_exchange_fee.AllowUserToDeleteRows = false;
             this.dataGridView_exchange_fee.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_exchange_fee.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView_exchange_fee.Location = new System.Drawing.Point(4, 4);
+            this.dataGridView_exchange_fee.Location = new System.Drawing.Point(3, 33);
             this.dataGridView_exchange_fee.Name = "dataGridView_exchange_fee";
             this.dataGridView_exchange_fee.ReadOnly = true;
             this.dataGridView_exchange_fee.RowHeadersWidth = 62;
             this.dataGridView_exchange_fee.RowTemplate.Height = 30;
-            this.dataGridView_exchange_fee.Size = new System.Drawing.Size(1300, 410);
+            this.dataGridView_exchange_fee.Size = new System.Drawing.Size(1294, 374);
             this.dataGridView_exchange_fee.TabIndex = 0;
+            // 
+            // label_exchange_fee_count
+            // 
+            this.label_exchange_fee_count.AutoSize = true;
+            this.label_exchange_fee_count.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_exchange_fee_count.Location = new System.Drawing.Point(3, 0);
+            this.label_exchange_fee_count.Name = "label_exchange_fee_count";
+            this.label_exchange_fee_count.Size = new System.Drawing.Size(103, 18);
+            this.label_exchange_fee_count.TabIndex = 1;
+            this.label_exchange_fee_count.Text = "记录条数：";
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.tableLayoutPanel5);
             this.tabPage3.Location = new System.Drawing.Point(4, 28);
             this.tabPage3.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(1308, 418);
             this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "飞马客户手续费率";
+            this.tabPage3.Text = "飞马浮动";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // tabPage4
+            // tableLayoutPanel5
             // 
-            this.tabPage4.Location = new System.Drawing.Point(4, 28);
-            this.tabPage4.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(1308, 418);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "导出飞马客户浮动费率";
-            this.tabPage4.UseVisualStyleBackColor = true;
+            this.tableLayoutPanel5.ColumnCount = 1;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel5.Controls.Add(this.dataGridView_femas_special_fee, 0, 1);
+            this.tableLayoutPanel5.Controls.Add(this.label_femas_special_fee_count, 0, 0);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 2;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(1308, 418);
+            this.tableLayoutPanel5.TabIndex = 1;
+            // 
+            // dataGridView_femas_special_fee
+            // 
+            this.dataGridView_femas_special_fee.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_femas_special_fee.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView_femas_special_fee.Location = new System.Drawing.Point(3, 33);
+            this.dataGridView_femas_special_fee.Name = "dataGridView_femas_special_fee";
+            this.dataGridView_femas_special_fee.RowHeadersWidth = 62;
+            this.dataGridView_femas_special_fee.RowTemplate.Height = 30;
+            this.dataGridView_femas_special_fee.Size = new System.Drawing.Size(1302, 382);
+            this.dataGridView_femas_special_fee.TabIndex = 0;
+            // 
+            // label_femas_special_fee_count
+            // 
+            this.label_femas_special_fee_count.AutoSize = true;
+            this.label_femas_special_fee_count.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_femas_special_fee_count.Location = new System.Drawing.Point(3, 0);
+            this.label_femas_special_fee_count.Name = "label_femas_special_fee_count";
+            this.label_femas_special_fee_count.Size = new System.Drawing.Size(103, 18);
+            this.label_femas_special_fee_count.TabIndex = 1;
+            this.label_femas_special_fee_count.Text = "记录条数：";
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.tableLayoutPanel6);
+            this.tabPage1.Location = new System.Drawing.Point(4, 28);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPage1.Size = new System.Drawing.Size(1308, 418);
+            this.tabPage1.TabIndex = 1;
+            this.tabPage1.Text = "金士达浮动";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.ColumnCount = 1;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel6.Controls.Add(this.dataGridView_kingstar_float, 0, 1);
+            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(4, 4);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            this.tableLayoutPanel6.RowCount = 2;
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(1300, 410);
+            this.tableLayoutPanel6.TabIndex = 0;
+            // 
+            // dataGridView_kingstar_float
+            // 
+            this.dataGridView_kingstar_float.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_kingstar_float.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView_kingstar_float.Location = new System.Drawing.Point(3, 33);
+            this.dataGridView_kingstar_float.Name = "dataGridView_kingstar_float";
+            this.dataGridView_kingstar_float.RowHeadersWidth = 62;
+            this.dataGridView_kingstar_float.RowTemplate.Height = 30;
+            this.dataGridView_kingstar_float.Size = new System.Drawing.Size(1294, 374);
+            this.dataGridView_kingstar_float.TabIndex = 0;
             // 
             // tableLayoutPanel1
             // 
@@ -237,8 +385,21 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "金士达转飞马浮动费率工具";
             this.tabControl1.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_kingstar_special_fee)).EndInit();
             this.tabPage2.ResumeLayout(false);
+            this.tableLayoutPanel4.ResumeLayout(false);
+            this.tableLayoutPanel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_exchange_fee)).EndInit();
+            this.tabPage3.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
+            this.tableLayoutPanel5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_femas_special_fee)).EndInit();
+            this.tabPage1.ResumeLayout(false);
+            this.tableLayoutPanel6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_kingstar_float)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
@@ -262,6 +423,16 @@
         private System.Windows.Forms.Button button_calc;
         private System.Windows.Forms.RichTextBox textBox_log;
         private System.Windows.Forms.DataGridView dataGridView_exchange_fee;
+        private System.Windows.Forms.DataGridView dataGridView_femas_special_fee;
+        private System.Windows.Forms.DataGridView dataGridView_kingstar_special_fee;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.Label label_kingstar_special_fee_count;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.Label label_exchange_fee_count;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.Label label_femas_special_fee_count;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
+        private System.Windows.Forms.DataGridView dataGridView_kingstar_float;
     }
 }
 

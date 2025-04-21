@@ -21,6 +21,12 @@ namespace kingstar2femasfee
             
             // 加载交易所手续费率数据
             RefreshExchangeFeeDataGridView();
+            
+            // 加载特殊交易手续费率数据
+            RefreshSpecialFeeDataGridView();
+            
+            // 加载金士达特殊交易手续费率数据
+            RefreshKingstarSpecialFeeDataGridView();
         }
         
         /// <summary>
@@ -207,30 +213,21 @@ namespace kingstar2femasfee
                 dataGridView_exchange_fee.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
                 dataGridView_exchange_fee.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView_exchange_fee.Font, FontStyle.Bold);
                 
-                // 显示行号
-                // dataGridView_exchange_fee.RowHeadersVisible = true;
-                // dataGridView_exchange_fee.RowHeadersWidth = 60; // 调整行头宽度
-                
-                // 为每一行添加行号
-                // for (int i = 0; i < dataGridView_exchange_fee.Rows.Count; i++)
-                // {
-                //     dataGridView_exchange_fee.Rows[i].HeaderCell.Value = (i + 1).ToString();
-                // }
+                // 隐藏行号列（第一列）
+                dataGridView_exchange_fee.RowHeadersVisible = false;
                 
                 // 设置小数列的格式，让数据更紧凑
                 foreach (DataGridViewColumn column in dataGridView_exchange_fee.Columns)
                 {
-                    //if (column.Name.Contains("费率") || column.Name.Contains("费额"))
-                    //{
-                    //    column.DefaultCellStyle.Format = "F8"; // 8位小数，不使用千分位分隔符
-                    //    column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                    //}
                     // 使所有列宽度紧凑但不隐藏数据
                     column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 }
                 
                 // 最终调整，确保所有数据可见
                 dataGridView_exchange_fee.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+
+                // 更新记录条数
+                label_exchange_fee_count.Text = $"记录条数：{displayData.Count()}条";
                 
                 LogInfo($"已刷新交易所手续费率数据，共 {displayData.Count()} 条");
             }
@@ -270,17 +267,93 @@ namespace kingstar2femasfee
             if (importSuccess)
             {
                 LogInfo("特殊交易手续费率数据导入成功");
+                // 刷新特殊交易手续费率DataGridView显示
+                RefreshSpecialFeeDataGridView();
+                return true;
             }
             else
             {
                 LogInfo("特殊交易手续费率数据导入失败");
                 return false;
             }
-            return true;
         }
         
         /// <summary>
-        /// 处理金士达客户交易手续费率数据(期货)
+        /// 刷新特殊交易手续费率DataGridView控件
+        /// </summary>
+        private void RefreshSpecialFeeDataGridView()
+        {
+            try
+            {
+                // 获取特殊交易手续费率数据
+                List<SpecialTradeFeeDO> dataList = DatabaseHelper.GetSpecialTradeFeeData();
+                
+                // 使用更友好的显示方式
+                var displayData = dataList.Select(data => new {
+                    客户号 = data.InvestorId,
+                    交易所 = GetDescriptionByCode<ExchangeEnum>(data.ExchCode[0]),
+                    产品类型 = GetDescriptionByCode<ProductTypeEnum>(data.ProductType[0]),
+                    产品 = data.ProductId,
+                    合约 = data.InstrumentId,
+                    // 投保 = GetDescriptionByCode<HedgeFlagEnum>(data.HedgeFlag[0]),
+                    // 买卖 = GetDescriptionByCode<BuySellEnum>(data.BuySell[0]),
+                    开仓按金额 = data.OpenFeeRate,
+                    开仓按手数 = data.OpenFeeAmt,
+                    短开按金额 = data.ShortOpenFeeRate,
+                    短开按手数 = data.ShortOpenFeeAmt,
+                    平仓按金额 = data.OffsetFeeRate,
+                    平仓按手数 = data.OffsetFeeAmt,
+                    平今按金额 = data.OtFeeRate,
+                    平今按手数 = data.OtFeeAmt,
+                    行权按金额 = data.ExecClearFeeRate,
+                    行权按手数 = data.ExecClearFeeAmt,
+                    是否跟随 = GetDescriptionByCode<isFllowEnum>(data.FollowType[0]),
+                    倍率 = data.MultipleRatio,
+                    更新日期 = data.OperDate,
+                    更新时间 = data.OperTime
+                }).ToList();
+                
+                // 绑定数据源
+                dataGridView_femas_special_fee.DataSource = displayData;
+                
+                // 设置表格样式
+                dataGridView_femas_special_fee.BorderStyle = BorderStyle.None;
+                // 去掉斑马纹，使用统一背景色
+                dataGridView_femas_special_fee.AlternatingRowsDefaultCellStyle.BackColor = Color.White;
+                dataGridView_femas_special_fee.DefaultCellStyle.BackColor = Color.White;
+                dataGridView_femas_special_fee.DefaultCellStyle.SelectionBackColor = Color.LightBlue;
+                dataGridView_femas_special_fee.DefaultCellStyle.SelectionForeColor = Color.Black;
+                dataGridView_femas_special_fee.EnableHeadersVisualStyles = false;
+                dataGridView_femas_special_fee.ColumnHeadersDefaultCellStyle.BackColor = Color.LightSteelBlue;
+                dataGridView_femas_special_fee.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+                dataGridView_femas_special_fee.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView_femas_special_fee.Font, FontStyle.Bold);
+                
+                // 隐藏行号列（第一列）
+                dataGridView_femas_special_fee.RowHeadersVisible = false;
+                
+                // 设置小数列的格式，让数据更紧凑
+                foreach (DataGridViewColumn column in dataGridView_femas_special_fee.Columns)
+                {
+                    // 使所有列宽度紧凑但不隐藏数据
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                }
+                
+                // 最终调整，确保所有数据可见
+                dataGridView_femas_special_fee.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+
+                // 更新记录条数
+                label_femas_special_fee_count.Text = $"记录条数：{displayData.Count()}条";
+                
+                LogInfo($"已刷新飞马特殊交易手续费率数据，共 {displayData.Count()} 条");
+            }
+            catch (Exception ex)
+            {
+                LogInfo($"刷新飞马特殊交易手续费率数据异常: {ex.Message}");
+            }
+        }
+        
+        /// <summary>
+        /// 处理金士达客户交易手续费率数据
         /// </summary>
         private bool ProcessKingstarSpecialTradeFeeData(string kingstarDir)
         {
@@ -328,6 +401,19 @@ namespace kingstar2femasfee
                 LogInfo("金士达客户交易手续费率数据导入失败");
                 return false;
             }
+
+            // 填充交易所代码
+            bool processDataSuccess=DatabaseHelper.ProcessKingstarDbData(LogInfo);
+            if (!processDataSuccess)
+            {
+                LogInfo("金士达客户交易手续费率数据填充交易所代码失败");
+                return false;
+            }
+            else
+            {
+                LogInfo("金士达客户交易手续费率数据填充交易所代码成功");
+            }
+            
             return true;
         }
 
@@ -418,6 +504,76 @@ namespace kingstar2femasfee
             richTextBox.SelectionStart = 0;
             richTextBox.SelectionLength = 0;
             richTextBox.ScrollToCaret();
+        }
+
+        /// <summary>
+        /// 刷新金士达特殊手续费率DataGridView控件
+        /// </summary>
+        private void RefreshKingstarSpecialFeeDataGridView()
+        {
+            try
+            {
+                // 获取金士达特殊手续费率数据
+                List<KingstarSpecialTradeFeeDO> dataList = DatabaseHelper.GetKingstarSpecialTradeFeeData();
+                
+                // 使用更友好的显示方式
+                var displayData = dataList.Select(data => new {
+                    客户号 = data.InvestorId,
+                    客户名称 = data.InvestorName,
+                    交易所 = GetDescriptionByCode<ExchangeEnum>(data.ExchCode[0]),
+                    产品类型 = GetDescriptionByCode<ProductTypeEnum>(data.ProductType[0]),
+                    产品 = data.ProductId,
+                    合约 = data.InstrumentId,
+                    开仓按金额 = data.OpenFeeRate,
+                    开仓按手数 = data.OpenFeeAmt,
+                    短开按金额 = data.ShortOpenFeeRate,
+                    短开按手数 = data.ShortOpenFeeAmt,
+                    平仓按金额 = data.OffsetFeeRate,
+                    平仓按手数 = data.OffsetFeeAmt,
+                    平今按金额 = data.OtFeeRate,
+                    平今按手数 = data.OtFeeAmt,
+                    行权按金额 = data.ExecClearFeeRate,
+                    行权按手数 = data.ExecClearFeeAmt,
+                    更新日期 = data.OperDate,
+                    更新时间 = data.OperTime
+                }).ToList();
+                
+                // 绑定数据源
+                dataGridView_kingstar_special_fee.DataSource = displayData;
+                
+                // 设置表格样式
+                dataGridView_kingstar_special_fee.BorderStyle = BorderStyle.None;
+                // 去掉斑马纹，使用统一背景色
+                dataGridView_kingstar_special_fee.AlternatingRowsDefaultCellStyle.BackColor = Color.White;
+                dataGridView_kingstar_special_fee.DefaultCellStyle.BackColor = Color.White;
+                dataGridView_kingstar_special_fee.DefaultCellStyle.SelectionBackColor = Color.LightBlue;
+                dataGridView_kingstar_special_fee.DefaultCellStyle.SelectionForeColor = Color.Black;
+                dataGridView_kingstar_special_fee.EnableHeadersVisualStyles = false;
+                dataGridView_kingstar_special_fee.ColumnHeadersDefaultCellStyle.BackColor = Color.LightSteelBlue;
+                dataGridView_kingstar_special_fee.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+                dataGridView_kingstar_special_fee.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView_kingstar_special_fee.Font, FontStyle.Bold);
+                
+                // 隐藏行号列（第一列）
+                dataGridView_kingstar_special_fee.RowHeadersVisible = false;
+                
+                // 设置小数列的格式，让数据更紧凑
+                foreach (DataGridViewColumn column in dataGridView_kingstar_special_fee.Columns)
+                {
+                    // 使所有列宽度紧凑但不隐藏数据
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                }
+                
+                // 最终调整，确保所有数据可见
+                dataGridView_kingstar_special_fee.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+                
+                // 更新记录条数
+                label_kingstar_special_fee_count.Text = $"记录条数：{displayData.Count()}条";
+                LogInfo($"已刷新金士达客户特殊手续费率数据，共 {displayData.Count()} 条");
+            }
+            catch (Exception ex)
+            {
+                LogInfo($"刷新金士达客户特殊手续费率数据异常: {ex.Message}");
+            }
         }
     }
 }

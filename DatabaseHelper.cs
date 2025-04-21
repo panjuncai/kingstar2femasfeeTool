@@ -691,6 +691,49 @@ namespace kingstar2femasfee
             }
         }
 
+        public static bool ProcessKingstarDbData(LogMessageDelegate logAction)
+        {
+            try
+            {
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+                    
+                    using (SQLiteTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            // 填充交易所代码
+                            string updateSql = @"UPDATE T_SPECIAL_TRADE_FEE_KINGSTAR
+                            SET exch_code = b.exch_code
+                            FROM t_product b
+                            WHERE T_SPECIAL_TRADE_FEE_KINGSTAR.product_type = b.product_type 
+                            AND T_SPECIAL_TRADE_FEE_KINGSTAR.product_id = b.product_id";
+                            using (SQLiteCommand command = new SQLiteCommand(updateSql, connection, transaction))
+                            {
+                                int rows = command.ExecuteNonQuery();
+                                LogMessage(logAction, $"已填充交易所代码 {rows} 条");
+                            }
+                            
+                            transaction.Commit();
+                            LogMessage(logAction, $"成功填充交易所代码");
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            LogMessage(logAction, $"填充交易所代码失败: {ex.Message}");
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogMessage(logAction, $"操作数据库异常: {ex.Message}");
+                return false;
+            }
+        }
         /// <summary>
         /// 获取交易所手续费率数据
         /// </summary>
@@ -753,6 +796,141 @@ namespace kingstar2femasfee
             catch (Exception ex)
             {
                 MessageBox.Show($"获取交易所手续费率数据异常: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
+            return resultList;
+        }
+        
+        /// <summary>
+        /// 获取飞马特殊交易手续费率数据
+        /// </summary>
+        /// <returns>飞马特殊交易手续费率数据列表</returns>
+        public static List<SpecialTradeFeeDO> GetSpecialTradeFeeData()
+        {
+            List<SpecialTradeFeeDO> resultList = new List<SpecialTradeFeeDO>();
+            
+            try
+            {
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+                    
+                    string selectSql = @"
+                    SELECT 
+                        investor_id, exch_code, product_type, product_id, option_series_id, instrument_id, 
+                        hedge_flag, buy_sell, open_fee_rate, open_fee_amt, 
+                        short_open_fee_rate, short_open_fee_amt, offset_fee_rate, offset_fee_amt, 
+                        ot_fee_rate, ot_fee_amt, exec_clear_fee_rate, exec_clear_fee_amt, 
+                        follow_type, multiple_ratio, oper_date, oper_time
+                    FROM T_SPECIAL_TRADE_FEE
+                    ORDER BY investor_id, exch_code, product_type, product_id, option_series_id, instrument_id, hedge_flag, buy_sell";
+                    
+                    using (SQLiteCommand command = new SQLiteCommand(selectSql, connection))
+                    {
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var data = new SpecialTradeFeeDO
+                                {
+                                    InvestorId = reader["investor_id"].ToString(),
+                                    ExchCode = reader["exch_code"].ToString(),
+                                    ProductType = reader["product_type"].ToString(),
+                                    ProductId = reader["product_id"].ToString(),
+                                    OptionSeriesId = reader["option_series_id"].ToString(),
+                                    InstrumentId = reader["instrument_id"].ToString(),
+                                    HedgeFlag = reader["hedge_flag"].ToString(),
+                                    BuySell = reader["buy_sell"].ToString(),
+                                    OpenFeeRate = Convert.ToDecimal(reader["open_fee_rate"]),
+                                    OpenFeeAmt = Convert.ToDecimal(reader["open_fee_amt"]),
+                                    ShortOpenFeeRate = Convert.ToDecimal(reader["short_open_fee_rate"]),
+                                    ShortOpenFeeAmt = Convert.ToDecimal(reader["short_open_fee_amt"]),
+                                    OffsetFeeRate = Convert.ToDecimal(reader["offset_fee_rate"]),
+                                    OffsetFeeAmt = Convert.ToDecimal(reader["offset_fee_amt"]),
+                                    OtFeeRate = Convert.ToDecimal(reader["ot_fee_rate"]),
+                                    OtFeeAmt = Convert.ToDecimal(reader["ot_fee_amt"]),
+                                    ExecClearFeeRate = Convert.ToDecimal(reader["exec_clear_fee_rate"]),
+                                    ExecClearFeeAmt = Convert.ToDecimal(reader["exec_clear_fee_amt"]),
+                                    FollowType = reader["follow_type"].ToString(),
+                                    MultipleRatio = Convert.ToDecimal(reader["multiple_ratio"]),
+                                    OperDate = reader["oper_date"].ToString(),
+                                    OperTime = reader["oper_time"].ToString()
+                                };
+                                
+                                resultList.Add(data);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"获取飞马特殊交易手续费率数据异常: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
+            return resultList;
+        }
+        
+        /// <summary>
+        /// 获取金士达客户特殊手续费率数据
+        /// </summary>
+        /// <returns>金士达客户特殊手续费率数据列表</returns>
+        public static List<KingstarSpecialTradeFeeDO> GetKingstarSpecialTradeFeeData()
+        {
+            List<KingstarSpecialTradeFeeDO> resultList = new List<KingstarSpecialTradeFeeDO>();
+            
+            try
+            {
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+                    
+                    string selectSql = @"
+                    SELECT 
+                        investor_id, investor_name, exch_code, product_type, product_id, instrument_id, 
+                        open_fee_rate, open_fee_amt, short_open_fee_rate, short_open_fee_amt, 
+                        offset_fee_rate, offset_fee_amt, ot_fee_rate, ot_fee_amt, 
+                        exec_clear_fee_rate, exec_clear_fee_amt, oper_date, oper_time
+                    FROM T_SPECIAL_TRADE_FEE_KINGSTAR
+                    ORDER BY investor_id, product_type, product_id, instrument_id";
+                    
+                    using (SQLiteCommand command = new SQLiteCommand(selectSql, connection))
+                    {
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var data = new KingstarSpecialTradeFeeDO
+                                {
+                                    InvestorId = reader["investor_id"].ToString(),
+                                    InvestorName = reader["investor_name"].ToString(),
+                                    ExchCode = reader["exch_code"].ToString(),
+                                    ProductType = reader["product_type"].ToString(),
+                                    ProductId = reader["product_id"].ToString(),
+                                    InstrumentId = reader["instrument_id"].ToString(),
+                                    OpenFeeRate = Convert.ToDecimal(reader["open_fee_rate"]),
+                                    OpenFeeAmt = Convert.ToDecimal(reader["open_fee_amt"]),
+                                    ShortOpenFeeRate = Convert.ToDecimal(reader["short_open_fee_rate"]),
+                                    ShortOpenFeeAmt = Convert.ToDecimal(reader["short_open_fee_amt"]),
+                                    OffsetFeeRate = Convert.ToDecimal(reader["offset_fee_rate"]),
+                                    OffsetFeeAmt = Convert.ToDecimal(reader["offset_fee_amt"]),
+                                    OtFeeRate = Convert.ToDecimal(reader["ot_fee_rate"]),
+                                    OtFeeAmt = Convert.ToDecimal(reader["ot_fee_amt"]),
+                                    ExecClearFeeRate = Convert.ToDecimal(reader["exec_clear_fee_rate"]),
+                                    ExecClearFeeAmt = Convert.ToDecimal(reader["exec_clear_fee_amt"]),
+                                    OperDate = reader["oper_date"].ToString(),
+                                    OperTime = reader["oper_time"].ToString()
+                                };
+                                
+                                resultList.Add(data);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"获取金士达特殊手续费率数据异常: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             
             return resultList;
