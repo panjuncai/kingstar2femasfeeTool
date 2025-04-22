@@ -212,11 +212,42 @@ namespace kingstar2femasfee
                         command.ExecuteNonQuery();
                     }
                     
-                    // 创建金士达特殊交易手续费浮动表唯一索引
-                    string createKingstarSpecialTradeFeeFloatIndex = @"
-                    CREATE UNIQUE INDEX IF NOT EXISTS idx_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT 
-                    ON T_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT (INVESTOR_ID, PRODUCT_TYPE, PRODUCT_ID, INSTRUMENT_ID)";
-                    using (SQLiteCommand command = new SQLiteCommand(createKingstarSpecialTradeFeeFloatIndex, connection))
+                    // 创建飞马特殊交易手续费导出表
+                    string createFemasSpecialTradeFeeExportTable = @"
+                    CREATE TABLE IF NOT EXISTS T_SPECIAL_TRADE_FEE_EXPORT (
+                      id INTEGER PRIMARY KEY AUTOINCREMENT,
+                      investor_id VARCHAR(18) NOT NULL,
+                      investor_name VARCHAR(100),
+                      exch_code VARCHAR(1),
+                      product_type VARCHAR(1) NOT NULL,
+                      product_id VARCHAR(10) NOT NULL,
+                      instrument_id VARCHAR(30) NOT NULL,
+                      open_fee_rate NUMERIC(17,8),
+                      open_fee_amt NUMERIC(17,8),
+                      short_open_fee_rate NUMERIC(17,8),
+                      short_open_fee_amt NUMERIC(17,8),
+                      offset_fee_rate NUMERIC(17,8),
+                      offset_fee_amt NUMERIC(17,8),
+                      ot_fee_rate NUMERIC(17,8),
+                      ot_fee_amt NUMERIC(17,8),
+                      exec_clear_fee_rate NUMERIC(17,8),
+                      exec_clear_fee_amt NUMERIC(17,8),
+                      follow_type VARCHAR(1),
+                      oper_date VARCHAR(8),
+                      oper_time VARCHAR(8),
+                      check_result VARCHAR(100),
+                      check_code NUMERIC(1)
+                    )";
+                    using (SQLiteCommand command = new SQLiteCommand(createFemasSpecialTradeFeeExportTable, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    // 创建飞马特殊交易手续费导出表唯一索引
+                    string createFemasSpecialTradeFeeExportIndex = @"
+                    CREATE UNIQUE INDEX IF NOT EXISTS idx_SPECIAL_TRADE_FEE_EXPORT 
+                    ON T_SPECIAL_TRADE_FEE_EXPORT (INVESTOR_ID, PRODUCT_TYPE, PRODUCT_ID, INSTRUMENT_ID)";
+                    using (SQLiteCommand command = new SQLiteCommand(createFemasSpecialTradeFeeExportIndex, connection))
                     {
                         command.ExecuteNonQuery();
                     }

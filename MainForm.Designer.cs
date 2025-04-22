@@ -59,6 +59,7 @@
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.button1 = new System.Windows.Forms.Button();
             this.label_export_count = new System.Windows.Forms.Label();
+            this.dataGridView_femas_special_fee_export = new System.Windows.Forms.DataGridView();
             this.tabControl1.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -77,6 +78,7 @@
             this.tabPage5.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_femas_special_fee_export)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -409,6 +411,7 @@
             this.tableLayoutPanel7.ColumnCount = 1;
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel7.Controls.Add(this.tableLayoutPanel8, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.dataGridView_femas_special_fee_export, 0, 1);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -455,6 +458,17 @@
             this.label_export_count.TabIndex = 1;
             this.label_export_count.Text = "记录条数：";
             // 
+            // dataGridView_femas_special_fee_export
+            // 
+            this.dataGridView_femas_special_fee_export.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_femas_special_fee_export.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView_femas_special_fee_export.Location = new System.Drawing.Point(3, 43);
+            this.dataGridView_femas_special_fee_export.Name = "dataGridView_femas_special_fee_export";
+            this.dataGridView_femas_special_fee_export.RowHeadersWidth = 62;
+            this.dataGridView_femas_special_fee_export.RowTemplate.Height = 30;
+            this.dataGridView_femas_special_fee_export.Size = new System.Drawing.Size(1302, 372);
+            this.dataGridView_femas_special_fee_export.TabIndex = 1;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
@@ -490,6 +504,7 @@
             this.tableLayoutPanel7.ResumeLayout(false);
             this.tableLayoutPanel8.ResumeLayout(false);
             this.tableLayoutPanel8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_femas_special_fee_export)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -526,6 +541,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label_export_count;
+        private System.Windows.Forms.DataGridView dataGridView_femas_special_fee_export;
     }
 }
 
