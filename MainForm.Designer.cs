@@ -416,7 +416,7 @@
             this.tableLayoutPanel7.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
             this.tableLayoutPanel7.RowCount = 2;
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel7.Size = new System.Drawing.Size(1308, 418);
             this.tableLayoutPanel7.TabIndex = 0;
@@ -434,7 +434,7 @@
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
             this.tableLayoutPanel8.RowCount = 1;
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(1302, 34);
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(1302, 44);
             this.tableLayoutPanel8.TabIndex = 0;
             // 
             // button1
@@ -443,7 +443,7 @@
             this.button1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.button1.Location = new System.Drawing.Point(1047, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(202, 28);
+            this.button1.Size = new System.Drawing.Size(202, 38);
             this.button1.TabIndex = 0;
             this.button1.Text = "导出飞马浮动手续费";
             this.button1.UseVisualStyleBackColor = true;
@@ -462,11 +462,11 @@
             // 
             this.dataGridView_femas_special_fee_export.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_femas_special_fee_export.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView_femas_special_fee_export.Location = new System.Drawing.Point(3, 43);
+            this.dataGridView_femas_special_fee_export.Location = new System.Drawing.Point(3, 53);
             this.dataGridView_femas_special_fee_export.Name = "dataGridView_femas_special_fee_export";
             this.dataGridView_femas_special_fee_export.RowHeadersWidth = 62;
             this.dataGridView_femas_special_fee_export.RowTemplate.Height = 30;
-            this.dataGridView_femas_special_fee_export.Size = new System.Drawing.Size(1302, 372);
+            this.dataGridView_femas_special_fee_export.Size = new System.Drawing.Size(1302, 362);
             this.dataGridView_femas_special_fee_export.TabIndex = 1;
             // 
             // MainForm

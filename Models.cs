@@ -134,4 +134,42 @@ namespace kingstar2femasfee
         public string OperTime { get; set; }
     }
 
+    /// <summary>
+    /// 飞马特殊交易手续费导出数据对象
+    /// </summary>
+    public class SpecialTradeFeeExportDO
+    {
+        public string CheckResult { get; set; }
+        public string CheckCode { get; set; }
+        public string InvestorId { get; set; }
+        public string InvestorName { get; set; }
+        public string ExchCode { get; set; }
+        public string ProductType { get; set; }
+        public string ProductId { get; set; }
+        public string InstrumentId { get; set; }
+        public Nullable<decimal> OpenFeeRate { get; set; }
+        public Nullable<decimal> OpenFeeAmt { get; set; }
+        public Nullable<decimal> ShortOpenFeeRate { get; set; }
+        public Nullable<decimal> ShortOpenFeeAmt { get; set; }
+        public Nullable<decimal> OffsetFeeRate { get; set; }
+        public Nullable<decimal> OffsetFeeAmt { get; set; }
+        public Nullable<decimal> OtFeeRate { get; set; }
+        public Nullable<decimal> OtFeeAmt { get; set; }
+        public Nullable<decimal> ExecClearFeeRate { get; set; }
+        public Nullable<decimal> ExecClearFeeAmt { get; set; }
+        public string FollowType { get; set; }
+        public Nullable<decimal> OpenFeeRateNew { get; set; }
+        public Nullable<decimal> OpenFeeAmtNew { get; set; }
+        public Nullable<decimal> ShortOpenFeeRateNew { get; set; }
+        public Nullable<decimal> ShortOpenFeeAmtNew { get; set; }
+        public Nullable<decimal> OffsetFeeRateNew { get; set; }
+        public Nullable<decimal> OffsetFeeAmtNew { get; set; }
+        public Nullable<decimal> OtFeeRateNew { get; set; }
+        public Nullable<decimal> OtFeeAmtNew { get; set; }
+        public Nullable<decimal> ExecClearFeeRateNew { get; set; }
+        public Nullable<decimal> ExecClearFeeAmtNew { get; set; }
+        public string FollowTypeNew { get; set; }
+        public string OperDate { get; set; }
+        public string OperTime { get; set; }
+    }
 }

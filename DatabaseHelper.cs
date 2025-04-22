@@ -171,7 +171,7 @@ namespace kingstar2femasfee
                     {
                         command.ExecuteNonQuery();
                     }
-                    
+
                     // 创建金士达特殊交易手续费表唯一索引
                     string createKingstarSpecialIndex = @"
                     CREATE UNIQUE INDEX IF NOT EXISTS idx_SPECIAL_TRADE_FEE_KINGSTAR 
@@ -211,7 +211,7 @@ namespace kingstar2femasfee
                     {
                         command.ExecuteNonQuery();
                     }
-                    
+
                     // 创建飞马特殊交易手续费导出表
                     string createFemasSpecialTradeFeeExportTable = @"
                     CREATE TABLE IF NOT EXISTS T_SPECIAL_TRADE_FEE_EXPORT (
@@ -233,6 +233,17 @@ namespace kingstar2femasfee
                       exec_clear_fee_rate NUMERIC(17,8),
                       exec_clear_fee_amt NUMERIC(17,8),
                       follow_type VARCHAR(1),
+                      open_fee_rate_new NUMERIC(17,8),
+                      open_fee_amt_new NUMERIC(17,8),
+                      short_open_fee_rate_new NUMERIC(17,8),
+                      short_open_fee_amt_new NUMERIC(17,8),
+                      offset_fee_rate_new NUMERIC(17,8),
+                      offset_fee_amt_new NUMERIC(17,8),
+                      ot_fee_rate_new NUMERIC(17,8),
+                      ot_fee_amt_new NUMERIC(17,8),
+                      exec_clear_fee_rate_new NUMERIC(17,8),
+                      exec_clear_fee_amt_new NUMERIC(17,8),
+                      follow_type_new VARCHAR(1),
                       oper_date VARCHAR(8),
                       oper_time VARCHAR(8),
                       check_result VARCHAR(100),
@@ -267,7 +278,7 @@ namespace kingstar2femasfee
                 }
             }
         }
-        
+
         /// <summary>
         /// 保存配置
         /// </summary>
@@ -303,7 +314,7 @@ namespace kingstar2femasfee
         {
             string femasDir = string.Empty;
             string kingstarDir = string.Empty;
-            
+
             try
             {
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
@@ -327,7 +338,7 @@ namespace kingstar2femasfee
             {
                 System.Windows.Forms.MessageBox.Show($"加载配置失败: {ex.Message}", "错误", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
             }
-            
+
             return (femasDir, kingstarDir);
         }
 
@@ -541,13 +552,13 @@ namespace kingstar2femasfee
                 LogMessage(logAction, "没有特殊交易手续费率数据需要导入");
                 return false;
             }
-            
+
             try
             {
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
-                    
+
                     using (SQLiteTransaction transaction = connection.BeginTransaction())
                     {
                         try
@@ -559,7 +570,7 @@ namespace kingstar2femasfee
                                 int rows = command.ExecuteNonQuery();
                                 LogMessage(logAction, $"已清除原有特殊交易手续费率数据 {rows} 条");
                             }
-                            
+
                             // 批量插入新数据
                             string insertSql = @"
                             INSERT INTO T_SPECIAL_TRADE_FEE 
@@ -572,7 +583,7 @@ namespace kingstar2femasfee
                              @OpenFeeRate, @OpenFeeAmt, @ShortOpenFeeRate, @ShortOpenFeeAmt,
                              @OffsetFeeRate, @OffsetFeeAmt, @OtFeeRate, @OtFeeAmt,
                              @ExecClearFeeRate, @ExecClearFeeAmt, @FollowType, @MultipleRatio, @OperDate, @OperTime)";
-                            
+
                             using (SQLiteCommand command = new SQLiteCommand(insertSql, connection, transaction))
                             {
                                 // 创建参数
@@ -598,7 +609,7 @@ namespace kingstar2femasfee
                                 command.Parameters.Add(new SQLiteParameter("@MultipleRatio", System.Data.DbType.Decimal));
                                 command.Parameters.Add(new SQLiteParameter("@OperDate", System.Data.DbType.String));
                                 command.Parameters.Add(new SQLiteParameter("@OperTime", System.Data.DbType.String));
-                                
+
                                 // 逐条插入数据
                                 foreach (var data in dataList)
                                 {
@@ -624,11 +635,11 @@ namespace kingstar2femasfee
                                     command.Parameters["@MultipleRatio"].Value = data.MultipleRatio;
                                     command.Parameters["@OperDate"].Value = data.OperDate;
                                     command.Parameters["@OperTime"].Value = data.OperTime;
-                                    
+
                                     command.ExecuteNonQuery();
                                 }
                             }
-                            
+
                             transaction.Commit();
                             LogMessage(logAction, $"成功导入特殊交易手续费率数据 {dataList.Count} 条");
                             return true;
@@ -662,13 +673,13 @@ namespace kingstar2femasfee
                 LogMessage(logAction, "没有金士达客户手续费变更表数据需要导入");
                 return false;
             }
-            
+
             try
             {
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
-                    
+
                     using (SQLiteTransaction transaction = connection.BeginTransaction())
                     {
                         try
@@ -680,7 +691,7 @@ namespace kingstar2femasfee
                                 int rows = command.ExecuteNonQuery();
                                 LogMessage(logAction, $"已清除原有金士达客户手续费变更表数据 {rows} 条");
                             }
-                            
+
                             // 批量插入新数据
                             string insertSql = @"
                             INSERT INTO T_SPECIAL_TRADE_FEE_KINGSTAR 
@@ -693,7 +704,7 @@ namespace kingstar2femasfee
                              @OpenFeeRate, @OpenFeeAmt, @ShortOpenFeeRate, @ShortOpenFeeAmt,
                              @OffsetFeeRate, @OffsetFeeAmt, @OtFeeRate, @OtFeeAmt,
                              @ExecClearFeeRate, @ExecClearFeeAmt, @OperDate, @OperTime)";
-                            
+
                             using (SQLiteCommand command = new SQLiteCommand(insertSql, connection, transaction))
                             {
                                 // 创建参数
@@ -715,7 +726,7 @@ namespace kingstar2femasfee
                                 command.Parameters.Add(new SQLiteParameter("@ExecClearFeeAmt", System.Data.DbType.Decimal));
                                 command.Parameters.Add(new SQLiteParameter("@OperDate", System.Data.DbType.String));
                                 command.Parameters.Add(new SQLiteParameter("@OperTime", System.Data.DbType.String));
-                                
+
                                 // 逐条插入数据
                                 foreach (var data in dataList)
                                 {
@@ -737,11 +748,11 @@ namespace kingstar2femasfee
                                     command.Parameters["@ExecClearFeeAmt"].Value = data.ExecClearFeeAmt;
                                     command.Parameters["@OperDate"].Value = data.OperDate;
                                     command.Parameters["@OperTime"].Value = data.OperTime;
-                                    
+
                                     command.ExecuteNonQuery();
                                 }
                             }
-                            
+
                             transaction.Commit();
                             LogMessage(logAction, $"成功导入金士达客户手续费变更表数据 {dataList.Count} 条");
                             return true;
@@ -770,13 +781,13 @@ namespace kingstar2femasfee
         /// <returns>是否导入成功</returns>
         public static bool ConvertKingstarSpecial2FloatData(LogMessageDelegate logAction)
         {
-            
+
             try
             {
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
-                    
+
                     using (SQLiteTransaction transaction = connection.BeginTransaction())
                     {
                         try
@@ -788,7 +799,7 @@ namespace kingstar2femasfee
                                 int rows = command.ExecuteNonQuery();
                                 LogMessage(logAction, $"已清除原有金士达浮动手续费数据 {rows} 条");
                             }
-                            
+
                             // 转换浮动手续费率
                             string convertSql = @"insert into t_special_trade_fee_kingstar_float
                                                 (investor_id   
@@ -841,13 +852,13 @@ namespace kingstar2femasfee
                                                     a.product_type = b.product_type 
                                                     AND a.product_id = b.product_id 
                                                     AND a.instrument_id = b.instrument_id";
-                            
+
                             using (SQLiteCommand command = new SQLiteCommand(convertSql, connection, transaction))
                             {
                                 command.ExecuteNonQuery();
                             }
 
-                            string checkOtherRecords=@"insert into t_special_trade_fee_kingstar_float
+                            string checkOtherRecords = @"insert into t_special_trade_fee_kingstar_float
                                                         (investor_id   
                                                         ,investor_name 
                                                         ,exch_code     
@@ -904,13 +915,13 @@ namespace kingstar2femasfee
                                                                 AND a.product_type = b.product_type 
                                                                 AND a.product_id = b.product_id 
                                                             AND a.instrument_id = b.instrument_id)";
-                            
+
                             using (SQLiteCommand command = new SQLiteCommand(checkOtherRecords, connection, transaction))
                             {
                                 command.ExecuteNonQuery();
                             }
 
-                            string checkNegativeRecords=@"UPDATE T_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT 
+                            string checkNegativeRecords = @"UPDATE T_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT 
                                                         SET check_result = '客户费率低于交易所',
                                                         check_code = 1 
                                                         WHERE
@@ -929,7 +940,7 @@ namespace kingstar2femasfee
                             using (SQLiteCommand command = new SQLiteCommand(checkNegativeRecords, connection, transaction))
                             {
                                 command.ExecuteNonQuery();
-                            }                                
+                            }
 
                             transaction.Commit();
                             LogMessage(logAction, $"成功转换金士达终值手续费为浮动手续费");
@@ -951,6 +962,258 @@ namespace kingstar2femasfee
             }
         }
 
+        /// <summary>
+        /// 转换导出数据
+        /// </summary>
+        /// <param name="dataList">飞马导出列表</param>
+        /// <param name="logAction">日志记录方法</param>
+        /// <returns>是否导入成功</returns>
+        public static bool ConvertSpecial2ExportData(LogMessageDelegate logAction)
+        {
+
+            try
+            {
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    using (SQLiteTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            // 清空旧数据
+                            string deleteSql = "DELETE FROM T_SPECIAL_TRADE_FEE_EXPORT";
+                            using (SQLiteCommand command = new SQLiteCommand(deleteSql, connection, transaction))
+                            {
+                                int rows = command.ExecuteNonQuery();
+                                LogMessage(logAction, $"已清除飞马导出数据 {rows} 条");
+                            }
+
+                            // 找出金士达多
+                            string kingstarMoreSql = @"INSERT INTO T_SPECIAL_TRADE_FEE_EXPORT (
+                                                investor_id,
+                                                investor_name,
+                                                exch_code,
+                                                product_type,
+                                                product_id,
+                                                instrument_id,
+                                                open_fee_rate_new,
+                                                open_fee_amt_new,
+                                                short_open_fee_rate_new,
+                                                short_open_fee_amt_new,
+                                                offset_fee_rate_new,
+                                                offset_fee_amt_new,
+                                                ot_fee_rate_new,
+                                                ot_fee_amt_new,
+                                                exec_clear_fee_rate_new,
+                                                exec_clear_fee_amt_new,
+                                                follow_type_new,
+                                                oper_date,
+                                                oper_time,
+                                                check_result,
+                                                check_code 
+                                            ) SELECT
+                                            a.investor_id,
+                                            a.investor_name,
+                                            a.exch_code,
+                                            a.product_type,
+                                            a.product_id,
+                                            a.instrument_id,
+                                            a.open_fee_rate,
+                                            a.open_fee_amt,
+                                            a.short_open_fee_rate,
+                                            a.short_open_fee_amt,
+                                            a.offset_fee_rate,
+                                            a.offset_fee_amt,
+                                            a.ot_fee_rate,
+                                            a.ot_fee_amt,
+                                            a.exec_clear_fee_rate,
+                                            a.exec_clear_fee_amt,
+                                            a.follow_type,
+                                            strftime( '%Y%m%d', 'now' ) AS oper_date,
+                                            strftime( '%H:%M:%S', 'now' ) AS oper_time,
+                                            '金士达多' AS check_result,
+                                            1 AS check_code 
+                                            FROM
+                                                T_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT a 
+                                            WHERE
+                                                NOT EXISTS (
+                                                SELECT
+                                                    1 from T_SPECIAL_TRADE_FEE b 
+                                                WHERE
+                                                    a.investor_id = b.investor_id 
+                                                    AND a.product_id = b.product_id 
+                                                    AND a.product_type = b.product_type 
+                                                AND a.instrument_id = b.instrument_id 
+                                                )";
+
+                            using (SQLiteCommand command = new SQLiteCommand(kingstarMoreSql, connection, transaction))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+
+                            string femasMoreSql = @"INSERT INTO T_SPECIAL_TRADE_FEE_EXPORT (
+                                                    investor_id,
+                                                    exch_code,
+                                                    product_type,
+                                                    product_id,
+                                                    instrument_id,
+                                                    open_fee_rate_new,
+                                                    open_fee_amt_new,
+                                                    short_open_fee_rate_new,
+                                                    short_open_fee_amt_new,
+                                                    offset_fee_rate_new,
+                                                    offset_fee_amt_new,
+                                                    ot_fee_rate_new,
+                                                    ot_fee_amt_new,
+                                                    exec_clear_fee_rate_new,
+                                                    exec_clear_fee_amt_new,
+                                                    follow_type_new,
+                                                    oper_date,
+                                                    oper_time,
+                                                    check_result,
+                                                    check_code 
+                                                ) SELECT
+                                                a.investor_id,
+                                                a.exch_code,
+                                                a.product_type,
+                                                a.product_id,
+                                                a.instrument_id,
+                                                a.open_fee_rate,
+                                                a.open_fee_amt,
+                                                a.short_open_fee_rate,
+                                                a.short_open_fee_amt,
+                                                a.offset_fee_rate,
+                                                a.offset_fee_amt,
+                                                a.ot_fee_rate,
+                                                a.ot_fee_amt,
+                                                a.exec_clear_fee_rate,
+                                                a.exec_clear_fee_amt,
+                                                a.follow_type,
+                                                strftime( '%Y%m%d', 'now' ) AS oper_date,
+                                                strftime( '%H:%M:%S', 'now' ) AS oper_time,
+                                                '飞马多' AS check_result,
+                                                1 AS check_code 
+                                                FROM
+                                                    T_SPECIAL_TRADE_FEE a 
+                                                WHERE
+                                                    NOT EXISTS (
+                                                    SELECT
+                                                        1 
+                                                    FROM
+                                                        T_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT b 
+                                                    WHERE
+                                                        a.investor_id = b.investor_id 
+                                                        AND a.product_id = b.product_id 
+                                                        AND a.product_type = b.product_type 
+                                                    AND a.instrument_id = b.instrument_id 
+                                                    )";
+
+                            using (SQLiteCommand command = new SQLiteCommand(femasMoreSql, connection, transaction))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+
+                            string matchSql = @"INSERT INTO T_SPECIAL_TRADE_FEE_EXPORT (
+                                                investor_id,
+                                                investor_name,
+                                                exch_code,
+                                                product_type,
+                                                product_id,
+                                                instrument_id,
+                                                open_fee_rate,
+                                                open_fee_amt,
+                                                short_open_fee_rate,
+                                                short_open_fee_amt,
+                                                offset_fee_rate,
+                                                offset_fee_amt,
+                                                ot_fee_rate,
+                                                ot_fee_amt,
+                                                exec_clear_fee_rate,
+                                                exec_clear_fee_amt,
+                                                follow_type,
+                                                open_fee_rate_new,
+                                                open_fee_amt_new,
+                                                short_open_fee_rate_new,
+                                                short_open_fee_amt_new,
+                                                offset_fee_rate_new,
+                                                offset_fee_amt_new,
+                                                ot_fee_rate_new,
+                                                ot_fee_amt_new,
+                                                exec_clear_fee_rate_new,
+                                                exec_clear_fee_amt_new,
+                                                follow_type_new,
+                                                oper_date,
+                                                oper_time,
+                                                check_result,
+                                                check_code 
+                                            ) SELECT
+                                            a.investor_id,
+                                            a.investor_name,
+                                            a.exch_code,
+                                            a.product_type,
+                                            a.product_id,
+                                            a.instrument_id,
+                                            a.open_fee_rate,
+                                            a.open_fee_amt,
+                                            a.short_open_fee_rate,
+                                            a.short_open_fee_amt,
+                                            a.offset_fee_rate,
+                                            a.offset_fee_amt,
+                                            a.ot_fee_rate,
+                                            a.ot_fee_amt,
+                                            a.exec_clear_fee_rate,
+                                            a.exec_clear_fee_amt,
+                                            a.follow_type,
+                                            b.open_fee_rate as open_fee_rate_new,
+                                            b.open_fee_amt as open_fee_amt_new,
+                                            b.short_open_fee_rate as short_open_fee_rate_new,
+                                            b.short_open_fee_amt as short_open_fee_amt_new,
+                                            b.offset_fee_rate as offset_fee_rate_new,
+                                            b.offset_fee_amt as offset_fee_amt_new,
+                                            b.ot_fee_rate as ot_fee_rate_new,
+                                            b.ot_fee_amt as ot_fee_amt_new,
+                                            b.exec_clear_fee_rate as exec_clear_fee_rate_new,
+                                            b.exec_clear_fee_amt as exec_clear_fee_amt_new,
+                                            b.follow_type as follow_type_new,
+                                            strftime( '%Y%m%d', 'now' ) AS oper_date,
+                                            strftime( '%H:%M:%S', 'now' ) AS oper_time,
+                                            '匹配' AS check_result,
+                                            0 AS check_code 
+                                            FROM
+                                                T_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT a,
+                                                T_SPECIAL_TRADE_FEE b 
+                                            WHERE
+                                                a.investor_id = b.investor_id 
+                                                AND a.product_id = b.product_id 
+                                                AND a.product_type = b.product_type 
+                                                AND a.instrument_id = b.instrument_id";
+                            using (SQLiteCommand command = new SQLiteCommand(matchSql, connection, transaction))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+                            LogMessage(logAction, $"成功转换飞马导出数据");
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            LogMessage(logAction, $"转换飞马导出数据失败: {ex.Message}");
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogMessage(logAction, $"操作数据库异常: {ex.Message}");
+                return false;
+            }
+        }
+
+
         public static bool ProcessKingstarDbData(LogMessageDelegate logAction)
         {
             try
@@ -958,7 +1221,7 @@ namespace kingstar2femasfee
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
-                    
+
                     using (SQLiteTransaction transaction = connection.BeginTransaction())
                     {
                         try
@@ -974,7 +1237,7 @@ namespace kingstar2femasfee
                                 int rows = command.ExecuteNonQuery();
                                 LogMessage(logAction, $"已填充交易所代码 {rows} 条");
                             }
-                            
+
                             transaction.Commit();
                             LogMessage(logAction, $"成功填充交易所代码");
                             return true;
@@ -1001,13 +1264,13 @@ namespace kingstar2femasfee
         public static List<ExchangeTradeFeeDO> GetExchangeTradeFeeData()
         {
             List<ExchangeTradeFeeDO> resultList = new List<ExchangeTradeFeeDO>();
-            
+
             try
             {
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
-                    
+
                     string selectSql = @"
                     SELECT 
                         exch_code, product_type, product_id, option_series_id, instrument_id, 
@@ -1017,7 +1280,7 @@ namespace kingstar2femasfee
                         oper_date, oper_time
                     FROM T_EXCHANGE_TRADE_FEE
                     ORDER BY exch_code, product_type, product_id, option_series_id, instrument_id, hedge_flag, buy_sell";
-                    
+
                     using (SQLiteCommand command = new SQLiteCommand(selectSql, connection))
                     {
                         using (SQLiteDataReader reader = command.ExecuteReader())
@@ -1046,7 +1309,7 @@ namespace kingstar2femasfee
                                     OperDate = reader["oper_date"].ToString(),
                                     OperTime = reader["oper_time"].ToString()
                                 };
-                                
+
                                 resultList.Add(data);
                             }
                         }
@@ -1057,10 +1320,10 @@ namespace kingstar2femasfee
             {
                 MessageBox.Show($"获取交易所手续费率数据异常: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
             return resultList;
         }
-        
+
         /// <summary>
         /// 获取飞马特殊交易手续费率数据
         /// </summary>
@@ -1068,13 +1331,13 @@ namespace kingstar2femasfee
         public static List<SpecialTradeFeeDO> GetSpecialTradeFeeData()
         {
             List<SpecialTradeFeeDO> resultList = new List<SpecialTradeFeeDO>();
-            
+
             try
             {
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
-                    
+
                     string selectSql = @"
                     SELECT 
                         investor_id, exch_code, product_type, product_id, option_series_id, instrument_id, 
@@ -1084,7 +1347,7 @@ namespace kingstar2femasfee
                         follow_type, multiple_ratio, oper_date, oper_time
                     FROM T_SPECIAL_TRADE_FEE
                     ORDER BY investor_id, exch_code, product_type, product_id, option_series_id, instrument_id, hedge_flag, buy_sell";
-                    
+
                     using (SQLiteCommand command = new SQLiteCommand(selectSql, connection))
                     {
                         using (SQLiteDataReader reader = command.ExecuteReader())
@@ -1116,7 +1379,7 @@ namespace kingstar2femasfee
                                     OperDate = reader["oper_date"].ToString(),
                                     OperTime = reader["oper_time"].ToString()
                                 };
-                                
+
                                 resultList.Add(data);
                             }
                         }
@@ -1127,10 +1390,10 @@ namespace kingstar2femasfee
             {
                 MessageBox.Show($"获取飞马特殊交易手续费率数据异常: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
             return resultList;
         }
-        
+
         /// <summary>
         /// 获取金士达客户特殊手续费率数据
         /// </summary>
@@ -1138,13 +1401,13 @@ namespace kingstar2femasfee
         public static List<KingstarSpecialTradeFeeDO> GetKingstarSpecialTradeFeeData()
         {
             List<KingstarSpecialTradeFeeDO> resultList = new List<KingstarSpecialTradeFeeDO>();
-            
+
             try
             {
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
-                    
+
                     string selectSql = @"
                     SELECT 
                         investor_id, investor_name, exch_code, product_type, product_id, instrument_id, 
@@ -1153,7 +1416,7 @@ namespace kingstar2femasfee
                         exec_clear_fee_rate, exec_clear_fee_amt, oper_date, oper_time
                     FROM T_SPECIAL_TRADE_FEE_KINGSTAR
                     ORDER BY investor_id, product_type, product_id, instrument_id";
-                    
+
                     using (SQLiteCommand command = new SQLiteCommand(selectSql, connection))
                     {
                         using (SQLiteDataReader reader = command.ExecuteReader())
@@ -1181,7 +1444,7 @@ namespace kingstar2femasfee
                                     OperDate = reader["oper_date"].ToString(),
                                     OperTime = reader["oper_time"].ToString()
                                 };
-                                
+
                                 resultList.Add(data);
                             }
                         }
@@ -1192,7 +1455,7 @@ namespace kingstar2femasfee
             {
                 MessageBox.Show($"获取金士达特殊手续费率数据异常: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
             return resultList;
         }
 
@@ -1203,13 +1466,13 @@ namespace kingstar2femasfee
         public static List<KingstarSpecialTradeFeeFloatDO> GetKingstarSpecialTradeFeeFloatData()
         {
             List<KingstarSpecialTradeFeeFloatDO> resultList = new List<KingstarSpecialTradeFeeFloatDO>();
-            
+
             try
             {
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
-                    
+
                     string selectSql = @"
                     SELECT 
                         check_result,check_code,investor_id, investor_name, exch_code, product_type, product_id, instrument_id, 
@@ -1218,7 +1481,7 @@ namespace kingstar2femasfee
                         exec_clear_fee_rate, exec_clear_fee_amt, follow_type, oper_date, oper_time
                     FROM T_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT
                     ORDER BY check_code desc,check_result,investor_id, product_type, product_id, instrument_id";
-                    
+
                     using (SQLiteCommand command = new SQLiteCommand(selectSql, connection))
                     {
                         using (SQLiteDataReader reader = command.ExecuteReader())
@@ -1228,7 +1491,7 @@ namespace kingstar2femasfee
                                 var data = new KingstarSpecialTradeFeeFloatDO
                                 {
                                     CheckResult = reader["check_result"].ToString(),
-                                    CheckCode=reader["check_code"].ToString(),
+                                    CheckCode = reader["check_code"].ToString(),
                                     InvestorId = reader["investor_id"].ToString(),
                                     InvestorName = reader["investor_name"].ToString(),
                                     ExchCode = reader["exch_code"].ToString(),
@@ -1249,7 +1512,7 @@ namespace kingstar2femasfee
                                     OperDate = reader["oper_date"].ToString(),
                                     OperTime = reader["oper_time"].ToString()
                                 };
-                                
+
                                 resultList.Add(data);
                             }
                         }
@@ -1260,8 +1523,91 @@ namespace kingstar2femasfee
             {
                 MessageBox.Show($"获取金士达特殊手续费率数据异常: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
+            return resultList;
+        }
+
+        /// <summary>
+        /// 获取飞马特殊交易手续费导出数据
+        /// </summary>
+        /// <returns>飞马特殊交易手续费导出数据列表</returns>
+        public static List<SpecialTradeFeeExportDO> GetSpecialTradeFeeExportData()
+        {
+            List<SpecialTradeFeeExportDO> resultList = new List<SpecialTradeFeeExportDO>();
+
+            try
+            {
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string selectSql = @"
+                    SELECT 
+                        check_result, check_code, investor_id, investor_name, exch_code, product_type, product_id, instrument_id, 
+                        open_fee_rate, open_fee_amt, short_open_fee_rate, short_open_fee_amt, 
+                        offset_fee_rate, offset_fee_amt, ot_fee_rate, ot_fee_amt, 
+                        exec_clear_fee_rate, exec_clear_fee_amt, follow_type,
+                        open_fee_rate_new, open_fee_amt_new, short_open_fee_rate_new, short_open_fee_amt_new,
+                        offset_fee_rate_new, offset_fee_amt_new, ot_fee_rate_new, ot_fee_amt_new,
+                        exec_clear_fee_rate_new, exec_clear_fee_amt_new, follow_type_new,
+                        oper_date, oper_time
+                    FROM T_SPECIAL_TRADE_FEE_EXPORT
+                    ORDER BY check_code desc, check_result, investor_id, product_type, product_id, instrument_id";
+
+                    using (SQLiteCommand command = new SQLiteCommand(selectSql, connection))
+                    {
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var data = new SpecialTradeFeeExportDO
+                                {
+                                    CheckResult = reader["check_result"].ToString(),
+                                    CheckCode = reader["check_code"].ToString(),
+                                    InvestorId = reader["investor_id"].ToString(),
+                                    InvestorName = reader["investor_name"].ToString(),
+                                    ExchCode = reader["exch_code"].ToString(),
+                                    ProductType = reader["product_type"].ToString(),
+                                    ProductId = reader["product_id"].ToString(),
+                                    InstrumentId = reader["instrument_id"].ToString(),
+                                    OpenFeeRate = reader["open_fee_rate"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["open_fee_rate"]),
+                                    OpenFeeAmt = reader["open_fee_amt"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["open_fee_amt"]),
+                                    ShortOpenFeeRate = reader["short_open_fee_rate"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["short_open_fee_rate"]),
+                                    ShortOpenFeeAmt = reader["short_open_fee_amt"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["short_open_fee_amt"]),
+                                    OffsetFeeRate = reader["offset_fee_rate"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["offset_fee_rate"]),
+                                    OffsetFeeAmt = reader["offset_fee_amt"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["offset_fee_amt"]),
+                                    OtFeeRate = reader["ot_fee_rate"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["ot_fee_rate"]),
+                                    OtFeeAmt = reader["ot_fee_amt"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["ot_fee_amt"]),
+                                    ExecClearFeeRate = reader["exec_clear_fee_rate"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["exec_clear_fee_rate"]),
+                                    ExecClearFeeAmt = reader["exec_clear_fee_amt"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["exec_clear_fee_amt"]),
+                                    FollowType = reader["follow_type"] == DBNull.Value ? "" : reader["follow_type"].ToString(),
+                                    OpenFeeRateNew = reader["open_fee_rate_new"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["open_fee_rate_new"]),
+                                    OpenFeeAmtNew = reader["open_fee_amt_new"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["open_fee_amt_new"]),
+                                    ShortOpenFeeRateNew = reader["short_open_fee_rate_new"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["short_open_fee_rate_new"]),
+                                    ShortOpenFeeAmtNew = reader["short_open_fee_amt_new"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["short_open_fee_amt_new"]),
+                                    OffsetFeeRateNew = reader["offset_fee_rate_new"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["offset_fee_rate_new"]),
+                                    OffsetFeeAmtNew = reader["offset_fee_amt_new"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["offset_fee_amt_new"]),
+                                    OtFeeRateNew = reader["ot_fee_rate_new"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["ot_fee_rate_new"]),
+                                    OtFeeAmtNew = reader["ot_fee_amt_new"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["ot_fee_amt_new"]),
+                                    ExecClearFeeRateNew = reader["exec_clear_fee_rate_new"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["exec_clear_fee_rate_new"]),
+                                    ExecClearFeeAmtNew = reader["exec_clear_fee_amt_new"] == DBNull.Value ? null : (Nullable<decimal>)Convert.ToDecimal(reader["exec_clear_fee_amt_new"]),
+                                    FollowTypeNew = reader["follow_type_new"] == DBNull.Value ? "" : reader["follow_type_new"].ToString(),
+                                    OperDate = reader["oper_date"].ToString(),
+                                    OperTime = reader["oper_time"].ToString()
+                                };
+
+                                resultList.Add(data);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"获取飞马特殊交易手续费导出数据异常: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
             return resultList;
         }
     }
-} 
+}
