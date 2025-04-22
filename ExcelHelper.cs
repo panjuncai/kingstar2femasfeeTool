@@ -850,12 +850,12 @@ namespace kingstar2femasfee
                                 string instrumentId="*";
                                 // 解析费率和金额 - 根据表格的实际列调整
                                 decimal openFeeRate = 0;  // 开仓手续费率,期权按金额的都是0
-                                decimal openFeeAmt = ParseDecimal(worksheet.Cells[row, 1].Text);   // 开仓手续费额
+                                decimal openFeeAmt = ParseDecimal(worksheet.Cells[row, 4].Text);   // 开仓手续费额
 
                                 // 短线开仓和平仓与开仓相同
-                                decimal shortOpenFeeRate = openFeeRate;
+                                decimal shortOpenFeeRate = 0;
                                 decimal shortOpenFeeAmt = openFeeAmt;
-                                decimal offsetFeeRate = openFeeRate;
+                                decimal offsetFeeRate = 0;
                                 decimal offsetFeeAmt = openFeeAmt;
 
                                 // 平今手续费率和平今手续费额

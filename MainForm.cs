@@ -27,6 +27,9 @@ namespace kingstar2femasfee
             
             // 加载金士达特殊交易手续费率数据
             RefreshKingstarSpecialFeeDataGridView();
+
+            // 加载金士达特殊交易手续费率浮动数据
+            RefreshKingstarSpecialFeeFloatDataGridView();
         }
         
         /// <summary>
@@ -115,6 +118,12 @@ namespace kingstar2femasfee
                 
                 // 处理金士达客户交易手续费率数据
                 if (!ProcessKingstarSpecialTradeFeeData(kingstarDir))
+                {
+                    return;
+                }
+
+                // 处理金士达客户交易手续费率浮动数据
+                if (!ProcessKingstarSpecialTradeFeeFloatData())
                 {
                     return;
                 }
@@ -395,6 +404,8 @@ namespace kingstar2femasfee
             if (importSuccess)
             {
                 LogInfo("金士达客户交易手续费率数据导入成功");
+                // 刷新金士达特殊手续费率DataGridView控件
+                RefreshKingstarSpecialFeeDataGridView();
             }
             else
             {
@@ -414,6 +425,31 @@ namespace kingstar2femasfee
                 LogInfo("金士达客户交易手续费率数据填充交易所代码成功");
             }
             
+            return true;
+        }
+
+        /// <summary>
+        /// 处理金士达客户交易手续费率浮动数据
+        /// </summary>
+        /// <returns></returns>
+        private bool ProcessKingstarSpecialTradeFeeFloatData()
+        {
+            LogInfo("开始处理金士达客户交易手续费率浮动数据...");
+
+            // 转换金士达终值手续费为浮动手续费
+            bool convertSuccess = DatabaseHelper.ConvertKingstarSpecial2FloatData(LogInfo);
+            if (!convertSuccess)
+            {
+                LogInfo("转换金士达终值手续费为浮动手续费失败");
+                return false;
+            }
+            else
+            {
+                LogInfo("转换金士达终值手续费为浮动手续费成功");
+                // 刷新金士达特殊手续费率浮动DataGridView控件
+                RefreshKingstarSpecialFeeFloatDataGridView();
+            }
+
             return true;
         }
 
@@ -574,6 +610,238 @@ namespace kingstar2femasfee
             {
                 LogInfo($"刷新金士达客户特殊手续费率数据异常: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// 刷新金士达特殊手续费率浮动DataGridView控件
+        /// </summary>
+        private void RefreshKingstarSpecialFeeFloatDataGridView()
+        {
+            try
+            {
+                // 获取金士达特殊手续费率浮动数据
+                List<KingstarSpecialTradeFeeFloatDO> dataList = DatabaseHelper.GetKingstarSpecialTradeFeeFloatData();
+                
+                // 创建DataTable以支持RowPrePaint事件
+                System.Data.DataTable dt = new System.Data.DataTable();
+                
+                // 添加列
+                dt.Columns.Add("检查结果", typeof(string));
+                dt.Columns.Add("客户号", typeof(string));
+                dt.Columns.Add("客户名称", typeof(string));
+                dt.Columns.Add("交易所", typeof(string));
+                dt.Columns.Add("产品类型", typeof(string));
+                dt.Columns.Add("产品", typeof(string));
+                dt.Columns.Add("合约", typeof(string));
+                dt.Columns.Add("开仓按金额", typeof(decimal));
+                dt.Columns.Add("开仓按手数", typeof(decimal));
+                dt.Columns.Add("短开按金额", typeof(decimal));
+                dt.Columns.Add("短开按手数", typeof(decimal));
+                dt.Columns.Add("平仓按金额", typeof(decimal));
+                dt.Columns.Add("平仓按手数", typeof(decimal));
+                dt.Columns.Add("平今按金额", typeof(decimal));
+                dt.Columns.Add("平今按手数", typeof(decimal));
+                dt.Columns.Add("行权按金额", typeof(decimal));
+                dt.Columns.Add("行权按手数", typeof(decimal));
+                dt.Columns.Add("是否跟随", typeof(string));
+                dt.Columns.Add("更新日期", typeof(string));
+                dt.Columns.Add("更新时间", typeof(string));
+                dt.Columns.Add("结果代码", typeof(int));
+                
+                // 添加数据行
+                foreach (var data in dataList)
+                {
+                    var row = dt.NewRow();
+                    row["检查结果"] = data.CheckResult;
+                    row["客户号"] = data.InvestorId;
+                    row["客户名称"] = data.InvestorName;
+                    row["交易所"] = GetDescriptionByCode<ExchangeEnum>(data.ExchCode[0]);
+                    row["产品类型"] = GetDescriptionByCode<ProductTypeEnum>(data.ProductType[0]);
+                    row["产品"] = data.ProductId;
+                    row["合约"] = data.InstrumentId;
+                    row["开仓按金额"] = data.OpenFeeRate;
+                    row["开仓按手数"] = data.OpenFeeAmt;
+                    row["短开按金额"] = data.ShortOpenFeeRate;
+                    row["短开按手数"] = data.ShortOpenFeeAmt;
+                    row["平仓按金额"] = data.OffsetFeeRate;
+                    row["平仓按手数"] = data.OffsetFeeAmt;
+                    row["平今按金额"] = data.OtFeeRate;
+                    row["平今按手数"] = data.OtFeeAmt;
+                    row["行权按金额"] = data.ExecClearFeeRate;
+                    row["行权按手数"] = data.ExecClearFeeAmt;
+                    row["是否跟随"] = GetDescriptionByCode<isFllowEnum>(data.FollowType[0]);
+                    row["更新日期"] = data.OperDate;
+                    row["更新时间"] = data.OperTime;
+                    row["结果代码"] = data.CheckCode;
+                    
+                    dt.Rows.Add(row);
+                }
+                
+                // 绑定数据源
+                dataGridView_kingstar_special_fee_float.DataSource = dt;
+                
+                // 设置表格样式
+                dataGridView_kingstar_special_fee_float.BorderStyle = BorderStyle.None;
+                // 去掉斑马纹，使用统一背景色
+                dataGridView_kingstar_special_fee_float.AlternatingRowsDefaultCellStyle.BackColor = Color.White;
+                dataGridView_kingstar_special_fee_float.DefaultCellStyle.BackColor = Color.White;
+                dataGridView_kingstar_special_fee_float.DefaultCellStyle.SelectionBackColor = Color.LightBlue;
+                dataGridView_kingstar_special_fee_float.DefaultCellStyle.SelectionForeColor = Color.Black;
+                dataGridView_kingstar_special_fee_float.EnableHeadersVisualStyles = false;
+                dataGridView_kingstar_special_fee_float.ColumnHeadersDefaultCellStyle.BackColor = Color.LightSteelBlue;
+                dataGridView_kingstar_special_fee_float.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+                dataGridView_kingstar_special_fee_float.ColumnHeadersDefaultCellStyle.Font = new Font(dataGridView_kingstar_special_fee_float.Font, FontStyle.Bold);
+                
+                // 隐藏行号列（第一列）
+                dataGridView_kingstar_special_fee_float.RowHeadersVisible = false;
+                
+                // 设置小数列的格式，让数据更紧凑
+                foreach (DataGridViewColumn column in dataGridView_kingstar_special_fee_float.Columns)
+                {
+                    // 使所有列宽度紧凑但不隐藏数据
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                }
+                
+                // 最终调整，确保所有数据可见
+                dataGridView_kingstar_special_fee_float.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+                
+                // 更新记录条数
+                label_kingstar_special_fee_float_count.Text = $"记录条数：{dt.Rows.Count}条";
+                LogInfo($"已刷新金士达客户特殊手续费率浮动数据，共 {dt.Rows.Count} 条");
+                
+                // 移除先前的事件（如果有）
+                // dataGridView_kingstar_special_fee_float.RowPrePaint -= DataGridView_kingstar_special_fee_float_RowPrePaint;
+                
+                // 添加行预绘制事件
+                dataGridView_kingstar_special_fee_float.RowPrePaint += DataGridView_kingstar_special_fee_float_RowPrePaint;
+                
+                // 强制刷新
+                dataGridView_kingstar_special_fee_float.Refresh();
+            }
+            catch (Exception ex)
+            {
+                LogInfo($"刷新金士达客户特殊手续费率浮动数据异常: {ex.Message}");
+            }
+        }
+        
+        /// <summary>
+        /// 行预绘制事件 - 为结果代码不等于0的行应用样式
+        /// </summary>
+        private void DataGridView_kingstar_special_fee_float_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.RowIndex < dataGridView_kingstar_special_fee_float.Rows.Count)
+            {
+                DataGridViewRow row = dataGridView_kingstar_special_fee_float.Rows[e.RowIndex];
+                
+                // 找到"结果代码"列
+                DataGridViewColumn resultCodeColumn = null;
+                foreach (DataGridViewColumn column in dataGridView_kingstar_special_fee_float.Columns)
+                {
+                    if (column.HeaderText == "结果代码")
+                    {
+                        resultCodeColumn = column;
+                        break;
+                    }
+                }
+                
+                if (resultCodeColumn != null && row.Cells[resultCodeColumn.Index].Value != null)
+                {
+                    object value = row.Cells[resultCodeColumn.Index].Value;
+                    if (value != null)
+                    {
+                        // 尝试解析结果代码
+                        int checkCode = 0;
+                        if (value is int)
+                        {
+                            checkCode = (int)value;
+                        }
+                        else if (int.TryParse(value.ToString(), out int parsedCode))
+                        {
+                            checkCode = parsedCode;
+                        }
+                        
+                        // 如果结果代码不为0，设置行样式
+                        if (checkCode != 0)
+                        {
+                            // 记录发现的问题行
+                            // LogInfo($"发现异常行 #{e.RowIndex + 1}，结果代码: {checkCode}");
+                            
+                            // 设置样式
+                            row.DefaultCellStyle.BackColor = Color.Red;
+                            row.DefaultCellStyle.ForeColor = Color.White;
+                            row.DefaultCellStyle.Font = new Font(dataGridView_kingstar_special_fee_float.Font, FontStyle.Bold);
+                            
+                            // 确保视觉更新
+                            row.Selected = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 为结果代码不等于0的行应用样式 (不再使用此方法)
+        /// </summary>
+        private void ApplyRowStylesBasedOnResultCode()
+        {
+            // 找到"结果代码"列的索引
+            int resultCodeIndex = -1;
+            for (int i = 0; i < dataGridView_kingstar_special_fee_float.Columns.Count; i++)
+            {
+                if (dataGridView_kingstar_special_fee_float.Columns[i].HeaderText == "结果代码")
+                {
+                    resultCodeIndex = i;
+                    break;
+                }
+            }
+            
+            if (resultCodeIndex == -1)
+            {
+                LogInfo("找不到'结果代码'列，无法设置行样式");
+                return;
+            }
+            
+            LogInfo($"找到结果代码列索引: {resultCodeIndex}，开始设置样式...");
+            int modifiedRows = 0;
+                
+            // 循环处理每一行
+            foreach (DataGridViewRow row in dataGridView_kingstar_special_fee_float.Rows)
+            {
+                if (row.Cells[resultCodeIndex].Value != null)
+                {
+                    // 记录当前值用于调试
+                    string checkCodeValue = row.Cells[resultCodeIndex].Value.ToString();
+                    LogInfo($"检查行 {row.Index}，结果代码值: '{checkCodeValue}'");
+                    
+                    // 尝试转换为整数并比较
+                    int checkCodeInt;
+                    bool isInt = int.TryParse(checkCodeValue, out checkCodeInt);
+                    
+                    // 使用字符串比较和整数比较两种方式
+                    if ((isInt && checkCodeInt != 0) || (!isInt && checkCodeValue != "0"))
+                    {
+                        // 设置整行的样式为红底白字加粗
+                        row.DefaultCellStyle = new DataGridViewCellStyle
+                        {
+                            BackColor = Color.Red,
+                            ForeColor = Color.White,
+                            Font = new Font(dataGridView_kingstar_special_fee_float.Font, FontStyle.Bold)
+                        };
+                        modifiedRows++;
+                        
+                        // 强制更新行
+                        dataGridView_kingstar_special_fee_float.UpdateCellValue(resultCodeIndex, row.Index);
+                        
+                        // 添加详细日志
+                        LogInfo($"已设置行 {row.Index} 样式为红底白字加粗，值: '{checkCodeValue}'");
+                    }
+                }
+            }
+            
+            LogInfo($"已设置 {modifiedRows} 行样式为红底白字加粗");
+            
+            // 刷新DataGridView强制重绘
+            dataGridView_kingstar_special_fee_float.Refresh();
         }
     }
 }

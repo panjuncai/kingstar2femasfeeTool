@@ -106,4 +106,32 @@ namespace kingstar2femasfee
         public string OperTime { get; set; }
     }
 
+    /// <summary>
+    /// 金士达特殊交易手续费浮动数据对象
+    /// </summary>
+    public class KingstarSpecialTradeFeeFloatDO
+    {
+        public string CheckResult { get; set; }
+        public string CheckCode { get; set; }
+        public string InvestorId { get; set; }
+        public string InvestorName { get; set; }
+        public string ExchCode { get; set; }
+        public string ProductType { get; set; }
+        public string ProductId { get; set; }
+        public string InstrumentId { get; set; }
+        public decimal OpenFeeRate { get; set; }
+        public decimal OpenFeeAmt { get; set; }
+        public decimal ShortOpenFeeRate { get; set; }
+        public decimal ShortOpenFeeAmt { get; set; }
+        public decimal OffsetFeeRate { get; set; }
+        public decimal OffsetFeeAmt { get; set; }
+        public decimal OtFeeRate { get; set; }
+        public decimal OtFeeAmt { get; set; }
+        public decimal ExecClearFeeRate { get; set; }
+        public decimal ExecClearFeeAmt { get; set; }
+        public string FollowType { get; set; }
+        public string OperDate { get; set; }
+        public string OperTime { get; set; }
+    }
+
 }

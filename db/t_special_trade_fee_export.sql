@@ -1,5 +1,5 @@
 -- Create table
-create table T_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT
+create table T_SPECIAL_TRADE_FEE_EXPORT
 (
   id primary key,
   investor_id                  VARCHAR2(18) not null,
@@ -26,7 +26,7 @@ create table T_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT
 );
 -- Add comments to the table 
 comment on table T_SPECIAL_TRADE_FEE
-  is '金士达特殊交易手续费';
+  is '飞马特殊交易手续费导出';
 -- Add comments to the columns 
 comment on column T_SPECIAL_TRADE_FEE.investor_id
   is '投资者号';
@@ -65,5 +65,5 @@ comment on column T_SPECIAL_TRADE_FEE.oper_date
 comment on column T_SPECIAL_TRADE_FEE.oper_time
   is '操作时间';
 -- Create/Recreate primary, unique and foreign key constraints 
-alter table T_SPECIAL_TRADE_FEE_FLOAT
-  add unique index idx_SPECIAL_TRADE_FEE_FLOAT (INVESTOR_ID, PRODUCT_TYPE, PRODUCT_ID, INSTRUMENT_ID);
+alter table T_SPECIAL_TRADE_FEE_EXPORT
+  add unique index idx_SPECIAL_TRADE_FEE_EXPORT (INVESTOR_ID, PRODUCT_TYPE, PRODUCT_ID, INSTRUMENT_ID);

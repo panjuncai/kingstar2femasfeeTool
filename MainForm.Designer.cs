@@ -44,7 +44,7 @@
             this.label_femas_special_fee_count = new System.Windows.Forms.Label();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
-            this.dataGridView_kingstar_float = new System.Windows.Forms.DataGridView();
+            this.dataGridView_kingstar_special_fee_float = new System.Windows.Forms.DataGridView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btn_femas_dir = new System.Windows.Forms.Button();
@@ -53,6 +53,12 @@
             this.textBox_kingstar = new System.Windows.Forms.TextBox();
             this.button_calc = new System.Windows.Forms.Button();
             this.textBox_log = new System.Windows.Forms.RichTextBox();
+            this.label_kingstar_special_fee_float_count = new System.Windows.Forms.Label();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label_export_count = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -65,9 +71,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_femas_special_fee)).BeginInit();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_kingstar_float)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_kingstar_special_fee_float)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.tabPage5.SuspendLayout();
+            this.tableLayoutPanel7.SuspendLayout();
+            this.tableLayoutPanel8.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -76,6 +85,7 @@
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(4, 49);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
@@ -248,7 +258,8 @@
             this.tableLayoutPanel6.ColumnCount = 1;
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel6.Controls.Add(this.dataGridView_kingstar_float, 0, 1);
+            this.tableLayoutPanel6.Controls.Add(this.dataGridView_kingstar_special_fee_float, 0, 1);
+            this.tableLayoutPanel6.Controls.Add(this.label_kingstar_special_fee_float_count, 0, 0);
             this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel6.Location = new System.Drawing.Point(4, 4);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
@@ -258,16 +269,16 @@
             this.tableLayoutPanel6.Size = new System.Drawing.Size(1300, 410);
             this.tableLayoutPanel6.TabIndex = 0;
             // 
-            // dataGridView_kingstar_float
+            // dataGridView_kingstar_special_fee_float
             // 
-            this.dataGridView_kingstar_float.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_kingstar_float.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView_kingstar_float.Location = new System.Drawing.Point(3, 33);
-            this.dataGridView_kingstar_float.Name = "dataGridView_kingstar_float";
-            this.dataGridView_kingstar_float.RowHeadersWidth = 62;
-            this.dataGridView_kingstar_float.RowTemplate.Height = 30;
-            this.dataGridView_kingstar_float.Size = new System.Drawing.Size(1294, 374);
-            this.dataGridView_kingstar_float.TabIndex = 0;
+            this.dataGridView_kingstar_special_fee_float.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_kingstar_special_fee_float.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView_kingstar_special_fee_float.Location = new System.Drawing.Point(3, 33);
+            this.dataGridView_kingstar_special_fee_float.Name = "dataGridView_kingstar_special_fee_float";
+            this.dataGridView_kingstar_special_fee_float.RowHeadersWidth = 62;
+            this.dataGridView_kingstar_special_fee_float.RowTemplate.Height = 30;
+            this.dataGridView_kingstar_special_fee_float.Size = new System.Drawing.Size(1294, 374);
+            this.dataGridView_kingstar_special_fee_float.TabIndex = 0;
             // 
             // tableLayoutPanel1
             // 
@@ -373,6 +384,77 @@
             this.textBox_log.TabIndex = 2;
             this.textBox_log.Text = "";
             // 
+            // label_kingstar_special_fee_float_count
+            // 
+            this.label_kingstar_special_fee_float_count.AutoSize = true;
+            this.label_kingstar_special_fee_float_count.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_kingstar_special_fee_float_count.Location = new System.Drawing.Point(3, 0);
+            this.label_kingstar_special_fee_float_count.Name = "label_kingstar_special_fee_float_count";
+            this.label_kingstar_special_fee_float_count.Size = new System.Drawing.Size(103, 18);
+            this.label_kingstar_special_fee_float_count.TabIndex = 1;
+            this.label_kingstar_special_fee_float_count.Text = "记录条数：";
+            // 
+            // tabPage5
+            // 
+            this.tabPage5.Controls.Add(this.tableLayoutPanel7);
+            this.tabPage5.Location = new System.Drawing.Point(4, 28);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Size = new System.Drawing.Size(1308, 418);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "导出结果";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel7
+            // 
+            this.tableLayoutPanel7.ColumnCount = 1;
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel7.Controls.Add(this.tableLayoutPanel8, 0, 0);
+            this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel7.Name = "tableLayoutPanel7";
+            this.tableLayoutPanel7.RowCount = 2;
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(1308, 418);
+            this.tableLayoutPanel7.TabIndex = 0;
+            // 
+            // tableLayoutPanel8
+            // 
+            this.tableLayoutPanel8.ColumnCount = 3;
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel8.Controls.Add(this.button1, 1, 0);
+            this.tableLayoutPanel8.Controls.Add(this.label_export_count, 0, 0);
+            this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel8.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel8.Name = "tableLayoutPanel8";
+            this.tableLayoutPanel8.RowCount = 1;
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(1302, 34);
+            this.tableLayoutPanel8.TabIndex = 0;
+            // 
+            // button1
+            // 
+            this.button1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.button1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.button1.Location = new System.Drawing.Point(1047, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(202, 28);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "导出飞马浮动手续费";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // label_export_count
+            // 
+            this.label_export_count.AutoSize = true;
+            this.label_export_count.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_export_count.Location = new System.Drawing.Point(3, 0);
+            this.label_export_count.Name = "label_export_count";
+            this.label_export_count.Size = new System.Drawing.Size(103, 18);
+            this.label_export_count.TabIndex = 1;
+            this.label_export_count.Text = "记录条数：";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
@@ -399,10 +481,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_femas_special_fee)).EndInit();
             this.tabPage1.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_kingstar_float)).EndInit();
+            this.tableLayoutPanel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_kingstar_special_fee_float)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.tabPage5.ResumeLayout(false);
+            this.tableLayoutPanel7.ResumeLayout(false);
+            this.tableLayoutPanel8.ResumeLayout(false);
+            this.tableLayoutPanel8.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -432,7 +519,13 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
         private System.Windows.Forms.Label label_femas_special_fee_count;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
-        private System.Windows.Forms.DataGridView dataGridView_kingstar_float;
+        private System.Windows.Forms.DataGridView dataGridView_kingstar_special_fee_float;
+        private System.Windows.Forms.Label label_kingstar_special_fee_float_count;
+        private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label_export_count;
     }
 }
 

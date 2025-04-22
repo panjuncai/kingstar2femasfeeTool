@@ -137,6 +137,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="db\t_config.sql" />
+    <Content Include="db\t_exchange_trade_fee.sql" />
+    <Content Include="db\t_special_trade_fee.sql" />
+    <Content Include="db\t_special_trade_fee_kingstar.sql" />
+    <Content Include="db\t_special_trade_fee_kingstar_float.sql" />
     <Content Include="product_data.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
