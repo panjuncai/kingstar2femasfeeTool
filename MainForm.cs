@@ -111,6 +111,29 @@ namespace kingstar2femasfee
                     return;
                 }
                 
+                // 确认是否清空所有表
+                if (MessageBox.Show("开始处理前是否清空所有现有数据？", "确认清空数据", 
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    LogInfo("开始清空所有数据表...");
+                    bool clearSuccess = DatabaseHelper.ClearAllTables(LogInfo);
+                    if (clearSuccess)
+                    {
+                        LogInfo("所有数据表已清空");
+                        
+                        // 刷新所有DataGridView
+                        RefreshAllDataGridViews();
+                    }
+                    else
+                    {
+                        if (MessageBox.Show("清空数据表时出现错误，是否继续处理？", "清空错误", 
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                        {
+                            return;
+                        }
+                    }
+                }
+                
                 // 处理交易所手续费率数据
                 if (!ProcessExchangeTradeFeeData(femasDir))
                 {
@@ -272,8 +295,8 @@ namespace kingstar2femasfee
             // 如果读取不成功，立即返回，不执行后续代码
             if (!success)
             {
-                LogInfo("特殊交易手续费率数据处理失败，请检查Excel文件");
-                return false;
+                LogInfo("没有飞马特殊手续费率文件");
+                return true;
             }
             
             // 如果数据列表为空，立即返回
@@ -387,8 +410,7 @@ namespace kingstar2femasfee
             // 如果读取不成功，立即返回，不执行后续代码
             if (!success)
             {
-                LogInfo("金士达客户交易手续费率数据(期货)处理失败，请检查Excel文件");
-                return false;
+                LogInfo("没有金士达期货手续费率文件");
             }
             
             LogInfo("开始处理金士达客户交易手续费率数据（期权）...");
@@ -397,8 +419,7 @@ namespace kingstar2femasfee
             // 如果读取不成功，立即返回，不执行后续代码
             if (!successOptions)
             {
-                LogInfo("金士达客户交易手续费率数据(期权)处理失败，请检查Excel文件");
-                return false;
+                LogInfo("没有金士达期权手续费率文件");
             }
 
             // 合并数据
@@ -417,8 +438,6 @@ namespace kingstar2femasfee
             if (importSuccess)
             {
                 LogInfo("金士达客户交易手续费率数据导入成功");
-                // 刷新金士达特殊手续费率DataGridView控件
-                RefreshKingstarSpecialFeeDataGridView();
             }
             else
             {
@@ -436,6 +455,8 @@ namespace kingstar2femasfee
             else
             {
                 LogInfo("金士达客户交易手续费率数据填充交易所代码成功");
+                // 刷新金士达特殊手续费率DataGridView控件
+                RefreshKingstarSpecialFeeDataGridView();
             }
             
             return true;
@@ -497,6 +518,7 @@ namespace kingstar2femasfee
                 List<SpecialTradeFeeExportDO> dataList = DatabaseHelper.GetSpecialTradeFeeExportData();
                 
                 // 使用更友好的显示方式
+                
                 var displayData = dataList.Select(data =>
                 new {
                     检查结果 = data.CheckResult,
@@ -689,9 +711,9 @@ namespace kingstar2femasfee
             {
                 // 获取金士达特殊手续费率数据
                 List<KingstarSpecialTradeFeeDO> dataList = DatabaseHelper.GetKingstarSpecialTradeFeeData();
-                
                 // 使用更友好的显示方式
-                var displayData = dataList.Select(data => new {
+                var displayData = dataList.Select(
+                    data => new {
                     客户号 = data.InvestorId,
                     客户名称 = data.InvestorName,
                     交易所 = GetDescriptionByCode<ExchangeEnum>(data.ExchCode[0]),
@@ -710,7 +732,8 @@ namespace kingstar2femasfee
                     行权按手数 = data.ExecClearFeeAmt,
                     更新日期 = data.OperDate,
                     更新时间 = data.OperTime
-                }).ToList();
+                }
+                    ).ToList();
                 
                 // 绑定数据源
                 dataGridView_kingstar_special_fee.DataSource = displayData;
@@ -1170,67 +1193,110 @@ namespace kingstar2femasfee
         {
             try
             {
-                // 获取金士达和飞马文件夹路径
-                string femasDir = textBox_femas.Text.Trim();
-                string kingstarDir = textBox_kingstar.Text.Trim();
+                // 询问用户是清空数据表还是清空文件夹
+                string[] options = new string[] { "清空数据表", "清空文件夹", "取消" };
+                DialogResult result = MessageBox.Show(
+                    "请选择要执行的操作：\n\n1. 清空数据表 - 清空所有数据库表中的数据\n2. 清空文件夹 - 删除金士达和飞马文件夹中的所有文件", 
+                    "选择操作", 
+                    MessageBoxButtons.YesNoCancel, 
+                    MessageBoxIcon.Question);
                 
-                // 检查路径是否配置
-                if (string.IsNullOrEmpty(femasDir) && string.IsNullOrEmpty(kingstarDir))
-                {
-                    MessageBox.Show("飞马和金士达文件夹路径均未配置，请先设置路径。", "路径错误", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-                
-                // 确认是否清空文件夹
-                string message = "确定要删除以下文件夹中的所有文件吗？此操作不可恢复！\n\n";
-                if (!string.IsNullOrEmpty(femasDir))
-                    message += $"飞马文件夹: {femasDir}\n";
-                if (!string.IsNullOrEmpty(kingstarDir))
-                    message += $"金士达文件夹: {kingstarDir}";
-                
-                if (MessageBox.Show(message, "确认清空文件夹", 
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                if (result == DialogResult.Cancel)
                 {
                     return;
                 }
-                
-                // 统计删除的文件数量
-                int deletedCount = 0;
-                int errorCount = 0;
-                
-                // 清空飞马文件夹
-                if (!string.IsNullOrEmpty(femasDir) && Directory.Exists(femasDir))
+                else if (result == DialogResult.Yes) // 清空数据表
                 {
-                    deletedCount += ClearDirectory(femasDir, out int errors);
-                    errorCount += errors;
+                    // 确认是否清空所有表
+                    if (MessageBox.Show("确定要清空所有数据表吗？此操作不可恢复！", "确认清空数据", 
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                    {
+                        return;
+                    }
+                    
+                    LogInfo("开始清空所有数据表...");
+                    bool clearSuccess = DatabaseHelper.ClearAllTables(LogInfo);
+                    
+                    if (clearSuccess)
+                    {
+                        LogInfo("所有数据表已清空");
+                        
+                        // 刷新所有DataGridView
+                        RefreshAllDataGridViews();
+                        
+                        MessageBox.Show("所有数据表已清空", "操作成功", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("清空数据表时出现错误，请查看日志了解详情", "操作失败", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
-                
-                // 清空金士达文件夹
-                if (!string.IsNullOrEmpty(kingstarDir) && Directory.Exists(kingstarDir))
+                else if (result == DialogResult.No) // 清空文件夹
                 {
-                    deletedCount += ClearDirectory(kingstarDir, out int errors);
-                    errorCount += errors;
-                }
-                
-                // 显示结果
-                if (errorCount == 0)
-                {
-                    LogInfo($"文件清理完成，共删除 {deletedCount} 个文件。");
-                    MessageBox.Show($"文件清理完成，共删除 {deletedCount} 个文件。", "清理成功", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    LogInfo($"文件清理部分完成，成功删除 {deletedCount} 个文件，有 {errorCount} 个文件删除失败。");
-                    MessageBox.Show($"文件清理部分完成，成功删除 {deletedCount} 个文件，有 {errorCount} 个文件删除失败。\n\n请检查日志了解详情。", 
-                        "清理部分完成", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    // 获取金士达和飞马文件夹路径
+                    string femasDir = textBox_femas.Text.Trim();
+                    string kingstarDir = textBox_kingstar.Text.Trim();
+                    
+                    // 检查路径是否配置
+                    if (string.IsNullOrEmpty(femasDir) && string.IsNullOrEmpty(kingstarDir))
+                    {
+                        MessageBox.Show("飞马和金士达文件夹路径均未配置，请先设置路径。", "路径错误", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    
+                    // 确认是否清空文件夹
+                    string message = "确定要删除以下文件夹中的所有文件吗？此操作不可恢复！\n\n";
+                    if (!string.IsNullOrEmpty(femasDir))
+                        message += $"飞马文件夹: {femasDir}\n";
+                    if (!string.IsNullOrEmpty(kingstarDir))
+                        message += $"金士达文件夹: {kingstarDir}";
+                    
+                    if (MessageBox.Show(message, "确认清空文件夹", 
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                    {
+                        return;
+                    }
+                    
+                    // 统计删除的文件数量
+                    int deletedCount = 0;
+                    int errorCount = 0;
+                    
+                    // 清空飞马文件夹
+                    if (!string.IsNullOrEmpty(femasDir) && Directory.Exists(femasDir))
+                    {
+                        deletedCount += ClearDirectory(femasDir, out int errors);
+                        errorCount += errors;
+                    }
+                    
+                    // 清空金士达文件夹
+                    if (!string.IsNullOrEmpty(kingstarDir) && Directory.Exists(kingstarDir))
+                    {
+                        deletedCount += ClearDirectory(kingstarDir, out int errors);
+                        errorCount += errors;
+                    }
+                    
+                    // 显示结果
+                    if (errorCount == 0)
+                    {
+                        LogInfo($"文件清理完成，共删除 {deletedCount} 个文件。");
+                        MessageBox.Show($"文件清理完成，共删除 {deletedCount} 个文件。", "清理成功", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        LogInfo($"文件清理部分完成，成功删除 {deletedCount} 个文件，有 {errorCount} 个文件删除失败。");
+                        MessageBox.Show($"文件清理部分完成，成功删除 {deletedCount} 个文件，有 {errorCount} 个文件删除失败。\n\n请检查日志了解详情。", 
+                            "清理部分完成", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                LogInfo($"清空文件夹时发生错误: {ex.Message}");
-                MessageBox.Show($"清空文件夹时发生错误:\n{ex.Message}", "操作失败", 
+                LogInfo($"清空操作时发生错误: {ex.Message}");
+                MessageBox.Show($"清空操作时发生错误:\n{ex.Message}", "操作失败", 
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -1291,6 +1357,29 @@ namespace kingstar2femasfee
                 errorCount++;
                 return deletedCount;
             }
+        }
+
+        /// <summary>
+        /// 刷新所有DataGridView控件
+        /// </summary>
+        private void RefreshAllDataGridViews()
+        {
+            // 刷新交易所手续费率数据
+            RefreshExchangeFeeDataGridView();
+            
+            // 刷新特殊交易手续费率数据
+            RefreshSpecialFeeDataGridView();
+            
+            // 刷新金士达特殊交易手续费率数据
+            RefreshKingstarSpecialFeeDataGridView();
+            
+            // 刷新金士达特殊交易手续费率浮动数据
+            RefreshKingstarSpecialFeeFloatDataGridView();
+            
+            // 刷新飞马特殊交易手续费导出数据
+            RefreshSpecialTradeFeeExportDataGridView();
+            
+            LogInfo("所有数据表已刷新");
         }
     }
 }

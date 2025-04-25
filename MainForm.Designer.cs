@@ -58,10 +58,10 @@
             this.textBox_femas = new System.Windows.Forms.TextBox();
             this.btn_kingstar_dir = new System.Windows.Forms.Button();
             this.textBox_kingstar = new System.Windows.Forms.TextBox();
-            this.button_calc = new System.Windows.Forms.Button();
-            this.textBox_log = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
+            this.button_calc = new System.Windows.Forms.Button();
             this.btn_clear = new System.Windows.Forms.Button();
+            this.textBox_log = new System.Windows.Forms.RichTextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
@@ -106,7 +106,7 @@
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(1308, 418);
+            this.tabPage2.Size = new System.Drawing.Size(1308, 413);
             this.tabPage2.TabIndex = 0;
             this.tabPage2.Text = "飞马交易所手续费率";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -124,7 +124,7 @@
             this.tableLayoutPanel4.RowCount = 2;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(1300, 410);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(1300, 405);
             this.tableLayoutPanel4.TabIndex = 1;
             // 
             // dataGridView_exchange_fee
@@ -138,7 +138,7 @@
             this.dataGridView_exchange_fee.ReadOnly = true;
             this.dataGridView_exchange_fee.RowHeadersWidth = 62;
             this.dataGridView_exchange_fee.RowTemplate.Height = 30;
-            this.dataGridView_exchange_fee.Size = new System.Drawing.Size(1294, 374);
+            this.dataGridView_exchange_fee.Size = new System.Drawing.Size(1294, 369);
             this.dataGridView_exchange_fee.TabIndex = 0;
             // 
             // label_exchange_fee_count
@@ -157,7 +157,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 28);
             this.tabPage4.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(1308, 418);
+            this.tabPage4.Size = new System.Drawing.Size(1308, 413);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "金士达绝对值";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -174,7 +174,7 @@
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(1308, 418);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(1308, 413);
             this.tableLayoutPanel3.TabIndex = 1;
             // 
             // dataGridView_kingstar_special_fee
@@ -185,7 +185,7 @@
             this.dataGridView_kingstar_special_fee.Name = "dataGridView_kingstar_special_fee";
             this.dataGridView_kingstar_special_fee.RowHeadersWidth = 62;
             this.dataGridView_kingstar_special_fee.RowTemplate.Height = 30;
-            this.dataGridView_kingstar_special_fee.Size = new System.Drawing.Size(1302, 382);
+            this.dataGridView_kingstar_special_fee.Size = new System.Drawing.Size(1302, 377);
             this.dataGridView_kingstar_special_fee.TabIndex = 0;
             // 
             // label_kingstar_special_fee_count
@@ -205,7 +205,7 @@
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(1308, 418);
+            this.tabPage1.Size = new System.Drawing.Size(1308, 413);
             this.tabPage1.TabIndex = 1;
             this.tabPage1.Text = "金士达浮动";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -223,7 +223,7 @@
             this.tableLayoutPanel6.RowCount = 2;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(1300, 410);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(1300, 405);
             this.tableLayoutPanel6.TabIndex = 0;
             // 
             // dataGridView_kingstar_special_fee_float
@@ -234,7 +234,7 @@
             this.dataGridView_kingstar_special_fee_float.Name = "dataGridView_kingstar_special_fee_float";
             this.dataGridView_kingstar_special_fee_float.RowHeadersWidth = 62;
             this.dataGridView_kingstar_special_fee_float.RowTemplate.Height = 30;
-            this.dataGridView_kingstar_special_fee_float.Size = new System.Drawing.Size(1294, 374);
+            this.dataGridView_kingstar_special_fee_float.Size = new System.Drawing.Size(1294, 369);
             this.dataGridView_kingstar_special_fee_float.TabIndex = 0;
             // 
             // label_kingstar_special_fee_float_count
@@ -253,7 +253,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 28);
             this.tabPage3.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(1308, 418);
+            this.tabPage3.Size = new System.Drawing.Size(1308, 413);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "飞马浮动";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -271,7 +271,7 @@
             this.tableLayoutPanel5.RowCount = 2;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(1308, 418);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(1308, 413);
             this.tableLayoutPanel5.TabIndex = 1;
             // 
             // dataGridView_femas_special_fee
@@ -282,7 +282,7 @@
             this.dataGridView_femas_special_fee.Name = "dataGridView_femas_special_fee";
             this.dataGridView_femas_special_fee.RowHeadersWidth = 62;
             this.dataGridView_femas_special_fee.RowTemplate.Height = 30;
-            this.dataGridView_femas_special_fee.Size = new System.Drawing.Size(1302, 382);
+            this.dataGridView_femas_special_fee.Size = new System.Drawing.Size(1302, 377);
             this.dataGridView_femas_special_fee.TabIndex = 0;
             // 
             // label_femas_special_fee_count
@@ -451,28 +451,6 @@
             this.textBox_kingstar.Size = new System.Drawing.Size(276, 28);
             this.textBox_kingstar.TabIndex = 0;
             // 
-            // button_calc
-            // 
-            this.button_calc.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button_calc.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_calc.Location = new System.Drawing.Point(150, 3);
-            this.button_calc.Name = "button_calc";
-            this.button_calc.Size = new System.Drawing.Size(141, 32);
-            this.button_calc.TabIndex = 5;
-            this.button_calc.Text = "一键生成";
-            this.button_calc.UseVisualStyleBackColor = true;
-            this.button_calc.Click += new System.EventHandler(this.Button_calc_Click);
-            // 
-            // textBox_log
-            // 
-            this.textBox_log.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox_log.Location = new System.Drawing.Point(3, 506);
-            this.textBox_log.Name = "textBox_log";
-            this.textBox_log.ReadOnly = true;
-            this.textBox_log.Size = new System.Drawing.Size(1318, 154);
-            this.textBox_log.TabIndex = 2;
-            this.textBox_log.Text = "";
-            // 
             // tableLayoutPanel9
             // 
             this.tableLayoutPanel9.ColumnCount = 2;
@@ -485,9 +463,21 @@
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
             this.tableLayoutPanel9.RowCount = 1;
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
             this.tableLayoutPanel9.Size = new System.Drawing.Size(294, 38);
             this.tableLayoutPanel9.TabIndex = 6;
+            // 
+            // button_calc
+            // 
+            this.button_calc.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button_calc.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.button_calc.Location = new System.Drawing.Point(150, 3);
+            this.button_calc.Name = "button_calc";
+            this.button_calc.Size = new System.Drawing.Size(141, 32);
+            this.button_calc.TabIndex = 5;
+            this.button_calc.Text = "一键生成";
+            this.button_calc.UseVisualStyleBackColor = true;
+            this.button_calc.Click += new System.EventHandler(this.Button_calc_Click);
             // 
             // btn_clear
             // 
@@ -497,9 +487,19 @@
             this.btn_clear.Name = "btn_clear";
             this.btn_clear.Size = new System.Drawing.Size(130, 32);
             this.btn_clear.TabIndex = 6;
-            this.btn_clear.Text = "一键清空";
+            this.btn_clear.Text = "清空文件";
             this.btn_clear.UseVisualStyleBackColor = true;
             this.btn_clear.Click += new System.EventHandler(this.btn_clear_Click);
+            // 
+            // textBox_log
+            // 
+            this.textBox_log.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox_log.Location = new System.Drawing.Point(3, 506);
+            this.textBox_log.Name = "textBox_log";
+            this.textBox_log.ReadOnly = true;
+            this.textBox_log.Size = new System.Drawing.Size(1318, 154);
+            this.textBox_log.TabIndex = 2;
+            this.textBox_log.Text = "";
             // 
             // MainForm
             // 

@@ -1609,5 +1609,64 @@ namespace kingstar2femasfee
 
             return resultList;
         }
+
+        /// <summary>
+        /// 清空所有数据表
+        /// </summary>
+        /// <param name="logAction">日志记录方法</param>
+        /// <returns>是否成功清空</returns>
+        public static bool ClearAllTables(LogMessageDelegate logAction)
+        {
+            try
+            {
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+                    
+                    // 清空交易所交易手续费表
+                    using (SQLiteCommand command = new SQLiteCommand("DELETE FROM T_EXCHANGE_TRADE_FEE", connection))
+                    {
+                        int count = command.ExecuteNonQuery();
+                        logAction?.Invoke($"已清空交易所交易手续费表，删除{count}条记录");
+                    }
+                    
+                    // 清空特殊交易手续费表
+                    using (SQLiteCommand command = new SQLiteCommand("DELETE FROM T_SPECIAL_TRADE_FEE", connection))
+                    {
+                        int count = command.ExecuteNonQuery();
+                        logAction?.Invoke($"已清空特殊交易手续费表，删除{count}条记录");
+                    }
+                    
+                    // 清空金士达特殊交易手续费表
+                    using (SQLiteCommand command = new SQLiteCommand("DELETE FROM T_SPECIAL_TRADE_FEE_KINGSTAR", connection))
+                    {
+                        int count = command.ExecuteNonQuery();
+                        logAction?.Invoke($"已清空金士达特殊交易手续费表，删除{count}条记录");
+                    }
+                    
+                    // 清空金士达特殊交易手续费浮动表
+                    using (SQLiteCommand command = new SQLiteCommand("DELETE FROM T_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT", connection))
+                    {
+                        int count = command.ExecuteNonQuery();
+                        logAction?.Invoke($"已清空金士达特殊交易手续费浮动表，删除{count}条记录");
+                    }
+                    
+                    // 清空飞马特殊交易手续费导出表
+                    using (SQLiteCommand command = new SQLiteCommand("DELETE FROM T_SPECIAL_TRADE_FEE_EXPORT", connection))
+                    {
+                        int count = command.ExecuteNonQuery();
+                        logAction?.Invoke($"已清空飞马特殊交易手续费导出表，删除{count}条记录");
+                    }
+                    
+                    // 不清空配置表和产品表，这些是基础数据
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                logAction?.Invoke($"清空数据表时发生错误: {ex.Message}");
+                return false;
+            }
+        }
     }
 }
