@@ -354,6 +354,14 @@ namespace kingstar2femasfee
                             decimal execClearFeeRate = ParseDecimal(worksheet.Cells[row, 20].Text);
                             decimal execClearFeeAmt = ParseDecimal(worksheet.Cells[row, 21].Text);
 
+                            // 如果investorId为空，则表示到达最后一行
+                            if (string.IsNullOrEmpty(investorId))
+                            {
+                                LogMessage(logAction, $"已到达数据末尾，跳过剩余行");
+                                success = true;
+                                return (success, resultList);
+                            }
+
                             // 检查必填字段
                             if (string.IsNullOrEmpty(investorId) || string.IsNullOrEmpty(exchCodeText) || string.IsNullOrEmpty(productTypeText) || 
                                 string.IsNullOrEmpty(productId) || string.IsNullOrEmpty(optionSeries) || string.IsNullOrEmpty(instrumentId) || 

@@ -909,7 +909,7 @@ namespace kingstar2femasfee
                                                             SELECT
                                                                 1 
                                                             FROM
-                                                                T_SPECIAL_TRADE_FEE_KINGSTAR_FLOAT b 
+                                                                t_special_trade_fee_kingstar_float b 
                                                             WHERE
                                                                 a.investor_id = b.investor_id 
                                                                 AND a.product_type = b.product_type 
