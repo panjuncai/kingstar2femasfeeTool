@@ -1153,7 +1153,7 @@ namespace kingstar2femasfee
                 rowData["投保标识"] = "*"; // 默认值 *
                 rowData["买卖标识"] = "*"; // 默认值 *
                 rowData["跟随交易所标识"] = GetCellValue(row, "新是否跟随");
-                rowData["跟随交易所倍数"] = "0"; // 默认值 0
+                rowData["跟随交易所倍数"] = "1"; // 默认值 1
                 rowData["开仓手续费率（按金额）"] = GetCellValue(row, "新开仓按金额");
                 rowData["开仓手续费额（按手数）"] = GetCellValue(row, "新开仓按手数");
                 rowData["短线开仓手续费率（按金额）"] = GetCellValue(row, "新短开按金额");
