@@ -942,6 +942,7 @@ namespace kingstar2femasfee
                                 command.ExecuteNonQuery();
                             }
 
+
                             transaction.Commit();
                             LogMessage(logAction, $"成功转换金士达终值手续费为浮动手续费");
                             return true;
@@ -1193,6 +1194,33 @@ namespace kingstar2femasfee
                                 command.ExecuteNonQuery();
                             }
 
+                            string updateNegtiveSql=@"UPDATE T_SPECIAL_TRADE_FEE_EXPORT 
+                            SET 
+                                open_fee_amt=CASE WHEN open_fee_amt<0 THEN 0 ELSE open_fee_amt END,
+                                short_open_fee_amt=CASE WHEN short_open_fee_amt<0 THEN 0 ELSE short_open_fee_amt END,
+                                offset_fee_amt=CASE WHEN offset_fee_amt<0 THEN 0 ELSE offset_fee_amt END,
+                                ot_fee_amt=CASE WHEN ot_fee_amt<0 THEN 0 ELSE ot_fee_amt END,
+                                exec_clear_fee_amt=CASE WHEN exec_clear_fee_amt<0 THEN 0 ELSE exec_clear_fee_amt END,
+                                open_fee_rate=CASE WHEN open_fee_rate<0 THEN 0 ELSE open_fee_rate END,
+                                short_open_fee_rate=CASE WHEN short_open_fee_rate<0 THEN 0 ELSE short_open_fee_rate END,
+                                offset_fee_rate=CASE WHEN offset_fee_rate<0 THEN 0 ELSE offset_fee_rate END,
+                                ot_fee_rate=CASE WHEN ot_fee_rate<0 THEN 0 ELSE ot_fee_rate END,
+                                exec_clear_fee_rate=CASE WHEN exec_clear_fee_rate<0 THEN 0 ELSE exec_clear_fee_rate END,
+                                open_fee_amt_new=CASE WHEN open_fee_amt_new<0 THEN 0 ELSE open_fee_amt_new END,
+                                short_open_fee_amt_new=CASE WHEN short_open_fee_amt_new<0 THEN 0 ELSE short_open_fee_amt_new END,
+                                offset_fee_amt_new=CASE WHEN offset_fee_amt_new<0 THEN 0 ELSE offset_fee_amt_new END,
+                                ot_fee_amt_new=CASE WHEN ot_fee_amt_new<0 THEN 0 ELSE ot_fee_amt_new END,
+                                exec_clear_fee_amt_new=CASE WHEN exec_clear_fee_amt_new<0 THEN 0 ELSE exec_clear_fee_amt_new END,
+                                open_fee_rate_new=CASE WHEN open_fee_rate_new<0 THEN 0 ELSE open_fee_rate_new END,
+                                short_open_fee_rate_new=CASE WHEN short_open_fee_rate_new<0 THEN 0 ELSE short_open_fee_rate_new END,
+                                offset_fee_rate_new=CASE WHEN offset_fee_rate_new<0 THEN 0 ELSE offset_fee_rate_new END,
+                                ot_fee_rate_new=CASE WHEN ot_fee_rate_new<0 THEN 0 ELSE ot_fee_rate_new END,
+                                exec_clear_fee_rate_new=CASE WHEN exec_clear_fee_rate_new<0 THEN 0 ELSE exec_clear_fee_rate_new END";
+                            using (SQLiteCommand command = new SQLiteCommand(updateNegtiveSql, connection, transaction))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+
                             transaction.Commit();
                             LogMessage(logAction, $"成功转换飞马导出数据");
                             return true;
@@ -1238,8 +1266,34 @@ namespace kingstar2femasfee
                                 LogMessage(logAction, $"已填充交易所代码 {rows} 条");
                             }
 
+                            // 大商所短开=平今
+                            string updateDCESql = @"UPDATE T_SPECIAL_TRADE_FEE_KINGSTAR
+                            SET short_open_fee_rate = ot_fee_rate,
+                            short_open_fee_amt = ot_fee_amt
+                            WHERE exch_code = 'D'";
+                            using (SQLiteCommand command = new SQLiteCommand(updateDCESql, connection, transaction))
+                            {
+                                int rows = command.ExecuteNonQuery();
+                                LogMessage(logAction, $"已填充大商所短开=平今 {rows} 条");
+                            }
+
+                            // 郑商所合约特殊处理
+                            string updateZSESql = @"UPDATE T_SPECIAL_TRADE_FEE_KINGSTAR
+                            SET instrument_id = CASE 
+                                WHEN substr(instrument_id, 3, 1) = '2' 
+                                THEN substr(instrument_id, 1, 2) || substr(instrument_id, 4)
+                                ELSE instrument_id 
+                            END
+                            WHERE exch_code = 'Z'";
+                            using (SQLiteCommand command = new SQLiteCommand(updateZSESql, connection, transaction))
+                            {
+                                int rows = command.ExecuteNonQuery();
+                                LogMessage(logAction, $"已填充郑商所合约特殊处理 {rows} 条");
+                            }
+
+                            
+
                             transaction.Commit();
-                            LogMessage(logAction, $"成功填充交易所代码");
                             return true;
                         }
                         catch (Exception ex)

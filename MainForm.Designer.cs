@@ -489,6 +489,7 @@
             this.btn_clear.TabIndex = 6;
             this.btn_clear.Text = "清空文件";
             this.btn_clear.UseVisualStyleBackColor = true;
+            this.btn_clear.Visible = false;
             this.btn_clear.Click += new System.EventHandler(this.btn_clear_Click);
             // 
             // textBox_log

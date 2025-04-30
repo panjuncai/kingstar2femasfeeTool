@@ -552,7 +552,7 @@ namespace kingstar2femasfee
             try
             {
                 // 查找最新的匹配文件
-                string[] files = Directory.GetFiles(directoryPath, "*客户手续费变更表.xlsx");
+                string[] files = Directory.GetFiles(directoryPath, "*表.xlsx");
                 if (files.Length == 0)
                 {
                     LogMessage(logAction, "未找到金士达客户手续费变更表Excel文件");
@@ -643,6 +643,11 @@ namespace kingstar2femasfee
                         try
                         {
                             if(worksheet.Cells[row, 1].Text.Trim().StartsWith("申请于"))
+                            {
+                                LogMessage(logAction, $"已到达数据末尾，跳过剩余行");
+                                break;
+                            }
+                            if(worksheet.Cells[row, 2].Text.Trim()=="")
                             {
                                 LogMessage(logAction, $"已到达数据末尾，跳过剩余行");
                                 break;
@@ -756,7 +761,7 @@ namespace kingstar2femasfee
             try
             {
                 // 查找最新的匹配文件
-                string[] files = Directory.GetFiles(directoryPath, "*客户手续费变更表-期权.xlsx");
+                string[] files = Directory.GetFiles(directoryPath, "*-期权.xlsx");
                 if (files.Length == 0)
                 {
                     LogMessage(logAction, "未找到金士达“客户手续费变更表-期权.xlsx”Excel文件");
@@ -852,6 +857,11 @@ namespace kingstar2femasfee
                                     LogMessage(logAction, $"已到达数据末尾，跳过剩余行");
                                     break;
                                 }
+                                if(worksheet.Cells[row, 2].Text.Trim()=="")
+                                {
+                                    LogMessage(logAction, $"已到达数据末尾，跳过剩余行");
+                                    break;
+                                }
                                 string productId = worksheet.Cells[row, 3].Text.Trim();
                                 string productType = "2";
                                 // 期权时，合约为*
@@ -895,6 +905,190 @@ namespace kingstar2femasfee
                                 if (kingstarDataCheck.ContainsKey(key))
                                 {
                                     LogMessage(logAction, $"金士达客户手续费变更表（期权）记录重复，请检查第{kingstarDataCheck[key]}行和第{row}行");
+                                    success = false;
+                                    return (success, resultList);
+                                }
+                                kingstarDataCheck.Add(key, row);
+
+                                // 创建数据对象
+                                var data = new KingstarSpecialTradeFeeDO
+                                {
+                                    InvestorId = investorId,
+                                    InvestorName = investorName,
+                                    ExchCode = "",  // 交易所代码暂时留空
+                                    ProductType = productType,
+                                    ProductId = productId,
+                                    InstrumentId = instrumentId,
+                                    OpenFeeRate = openFeeRate,
+                                    OpenFeeAmt = openFeeAmt,
+                                    ShortOpenFeeRate = shortOpenFeeRate,
+                                    ShortOpenFeeAmt = shortOpenFeeAmt,
+                                    OffsetFeeRate = offsetFeeRate,
+                                    OffsetFeeAmt = offsetFeeAmt,
+                                    OtFeeRate = otFeeRate,
+                                    OtFeeAmt = otFeeAmt,
+                                    ExecClearFeeRate = execClearFeeRate,
+                                    ExecClearFeeAmt = execClearFeeAmt,
+                                    OperDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                                    OperTime = DateTime.Now.ToString("HH:mm:ss")
+                                };
+
+                                resultList.Add(data);
+                            }
+                            catch (Exception ex)
+                            {
+                                LogMessage(logAction, $"第{row}行数据处理异常：{ex.Message}");
+                                success = false;
+                            }
+                        }
+                    }
+                }
+                return (success, resultList);
+            }
+            catch (Exception ex)
+            {
+                LogMessage(logAction, $"读取金士达客户手续费变更表（期权）Excel文件异常: {ex.Message}");
+                return (false, resultList);
+            }
+        }
+    
+        /// <summary>
+        /// 读取金士达客户手续费率-品种Excel文件
+        /// </summary>
+        /// <param name="directoryPath">文件目录</param>
+        /// <param name="logAction">日志记录方法</param>
+        /// <returns>处理结果和金士达客户手续费率-品种数据列表</returns>
+        public static (bool success, List<KingstarSpecialTradeFeeDO> dataList) ReadKingstarSpecialTradeFeeExcelProduct(string directoryPath, LogMessageDelegate logAction)
+        {
+            List<KingstarSpecialTradeFeeDO> resultList = new List<KingstarSpecialTradeFeeDO>();
+            bool success = true;
+
+            try
+            {
+                // 查找最新的匹配文件
+                string[] files = Directory.GetFiles(directoryPath, "*-品种.xlsx");
+                if (files.Length == 0)
+                {
+                    LogMessage(logAction, "未找到金士达“客户手续费变更表-品种.xlsx”Excel文件");
+                    return (false, resultList);
+                }
+
+                // 获取全部文件
+                // string latestFile = files.OrderByDescending(f => f).First();
+                // string fileName = Path.GetFileName(latestFile);
+                foreach (var file in files)
+                {
+                    LogMessage(logAction, $"找到金士达客户手续费变更表-品种文件: {file}");
+
+                    // 创建Excel应用程序实例
+                    using (ExcelPackage package = new ExcelPackage(new FileInfo(file)))
+                    {
+                        // 获取工作表 - 修改为获取所有工作表并选择第一个非空的工作表
+                        ExcelWorksheet worksheet = null;
+
+                        // 先尝试通过索引获取
+                        try
+                        {
+                            worksheet = package.Workbook.Worksheets[0];
+                        }
+                        catch
+                        {
+                            // 如果索引获取失败，尝试通过名称获取或遍历所有工作表
+                            if (package.Workbook.Worksheets.Count > 0)
+                            {
+                                // 尝试遍历所有工作表
+                                foreach (var sheet in package.Workbook.Worksheets)
+                                {
+                                    if (sheet != null && sheet.Dimension != null)
+                                    {
+                                        worksheet = sheet;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (worksheet == null)
+                        {
+                            LogMessage(logAction, "Excel文件中未找到工作表，请检查文件格式");
+                            return (false, resultList);
+                        }
+
+                        // 输出工作表信息，帮助调试
+                        LogMessage(logAction, $"已找到工作表: {worksheet.Name}，行数: {(worksheet.Dimension != null ? worksheet.Dimension.Rows.ToString() : "未知")}");
+
+                        // 统计数据行数
+                        if (worksheet.Dimension == null)
+                        {
+                            LogMessage(logAction, "工作表结构异常，无法获取行数信息");
+                            return (false, resultList);
+                        }
+
+                        int rowCount = worksheet.Dimension.Rows;
+                        if (rowCount <= 6) // 表头占用前6行
+                        {
+                            LogMessage(logAction, "Excel文件中没有数据行");
+                            return (false, resultList);
+                        }
+
+                        LogMessage(logAction, $"开始解析金士达客户手续费变更表（品种）数据，共 {rowCount - 6} 行");
+
+                        // 数据重复检查字典
+                        Dictionary<string, int> kingstarDataCheck = new Dictionary<string, int>();
+                       
+                        // 从表格的数据行开始读取，本例中从第5行开始（交易所、品种等标题行为第5行）
+                        // 真正的数据从第6行开始
+                        for (int row = 6; row <= rowCount; row++)
+                        {
+                            try
+                            {
+                                if (worksheet.Cells[row, 1].Text.Trim().StartsWith("申请于"))
+                                {
+                                    LogMessage(logAction, $"已到达数据末尾，跳过剩余行");
+                                    break;
+                                }
+                                if(worksheet.Cells[row, 2].Text.Trim()=="")
+                                {
+                                    LogMessage(logAction, $"已到达数据末尾，跳过剩余行");
+                                    break;
+                                }
+                                string investorId = worksheet.Cells[row, 1].Text.Trim();
+                                string investorName = worksheet.Cells[row, 2].Text.Trim();
+                                string instrumentId= worksheet.Cells[row, 3].Text.Trim();
+                                string productType = "1";
+                                string productId=extractProductId(instrumentId);
+                                // 解析费率和金额 - 根据表格的实际列调整
+                                decimal openFeeRate = ParseDecimal(worksheet.Cells[row, 4].Text);  // 开仓手续费率
+                                decimal openFeeAmt = ParseDecimal(worksheet.Cells[row, 5].Text);   // 开仓手续费额
+
+                                // 短线开仓和平仓与开仓相同
+                                decimal shortOpenFeeRate = openFeeRate;
+                                decimal shortOpenFeeAmt = openFeeAmt;
+                                decimal offsetFeeRate = openFeeRate;
+                                decimal offsetFeeAmt = openFeeAmt;
+
+                                // 平今手续费率和平今手续费额
+                                decimal otFeeRate = ParseDecimal(worksheet.Cells[row, 6].Text);
+                                decimal otFeeAmt = ParseDecimal(worksheet.Cells[row, 7].Text);
+
+                                // 行权手续费默认为0
+                                decimal execClearFeeRate = 0;
+                                decimal execClearFeeAmt =0;
+
+                                // 检查必填字段
+                                if (string.IsNullOrEmpty(investorId) || string.IsNullOrEmpty(productType) ||
+                                    string.IsNullOrEmpty(productId) || string.IsNullOrEmpty(instrumentId))
+                                {
+                                    LogMessage(logAction, $"第{row}行数据不完整，投资者号、产品类型、产品代码、合约代码为必填项");
+                                    success = false;
+                                    return (success, resultList);
+                                }
+
+                                // 检查数据是否重复
+                                string key = $"{investorId}|{productType}|{productId}|{instrumentId}";
+                                if (kingstarDataCheck.ContainsKey(key))
+                                {
+                                    LogMessage(logAction, $"金士达客户手续费变更表（品种）记录重复，请检查第{kingstarDataCheck[key]}行和第{row}行");
                                     success = false;
                                     return (success, resultList);
                                 }
